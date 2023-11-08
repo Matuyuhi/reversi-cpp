@@ -3,9 +3,21 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
+
+cmake-build-debug
+
+.DS_Store
+build
+.vs
+
+.idea
+
+## visual studio
+x64
+x86
+Debug
+Release
+*.sdf
+*.opensdf
+*.suo
+*.vcxproj.user
