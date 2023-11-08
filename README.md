@@ -1,0 +1,2 @@
+# reversi-cpp
+c++のリバーシ
