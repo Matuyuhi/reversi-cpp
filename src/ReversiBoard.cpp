@@ -6,11 +6,13 @@
 
 
 ReversiBoard::ReversiBoard(): boardSize(8) {
+    /* boardの初期化 */
     board = std::vector<std::vector<stone>>(boardSize, std::vector<stone>(boardSize, stone::Empty));
-    // ゲーム開始時の4つの石を配置
     placeableCells[stone::Empty].clear();
     placeableCells[stone::Black].clear();
     placeableCells[stone::White].clear();
+
+    /* ゲーム開始時の4つの石を配置 */
     board[3][3] = stone::White;
     updatePlaceableCells(3, 3);
     board[3][4] = stone::Black;
@@ -29,7 +31,7 @@ bool ReversiBoard::placeStone(int row, int col, stone color) {
 
 
     bool isFlip = false;
-    for (const auto& dir : directions) {
+    for (const std::pair<int, int>& dir : directions) {
         if (isCanPlaceWithDirection(row, col, color, dir)) {
             flip(row, col, color, dir);
             isFlip = true;
@@ -73,11 +75,11 @@ void ReversiBoard::updatePlaceableCells(int row, int col) {
 void ReversiBoard::updatePlaceableCellsWithStone(int row, int col, stone color) {
     int r = row;
     int c = col;
-    for (const auto& dir : directions) {
+    for (const std::pair<int, int>& dir : directions) {
         r = row + dir.first;
         c = col + dir.second;
         bool isCanPlaced = false;
-        for (const auto& updateDir : directions) {
+        for (const std::pair<int, int>& updateDir : directions) {
             if (isCanPlaceWithDirection(r, c, color, updateDir)) {
                 isCanPlaced = true;
                 break;
@@ -121,7 +123,7 @@ bool ReversiBoard::isCanPlace(int row, int col, stone color) {
         return false;
     }
 
-    for (const auto& dir : directions) {
+    for (const std::pair<int, int>& dir : directions) {
         if (isCanPlaceWithDirection(row, col, color, dir)) {
             return true;
         }
@@ -131,8 +133,8 @@ bool ReversiBoard::isCanPlace(int row, int col, stone color) {
 }
 
 void ReversiBoard::printBoard(stone mine) {
-    for (size_t col = 0; col < board.size(); ++col) {
-        for (size_t row = 0; row < board[col].size(); ++row) {
+    for (int col = 0; col < board.size(); ++col) {
+        for (int row = 0; row < board[col].size(); ++row) {
             switch (board[row][col]) {
                 case stone::Empty: {
                     if (placeableCells[mine].contains({row, col})) {

@@ -27,7 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\List.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ReversiBoard.cpp" />
   </ItemGroup>

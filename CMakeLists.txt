@@ -8,7 +8,6 @@ add_executable(work src/main.cpp
         header/Stone.h
         src/ReversiBoard.cpp
         header/ReversiBoard.h
-        src/List.cpp
         header/List.h
         header/cout.h
 )
