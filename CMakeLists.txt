@@ -10,4 +10,6 @@ add_executable(work src/main.cpp
         header/ReversiBoard.h
         header/List.h
         header/cout.h
+        src/ReversiGame.cpp
+        header/ReversiGame.h
 )

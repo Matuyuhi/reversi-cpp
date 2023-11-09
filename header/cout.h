@@ -14,6 +14,16 @@
 #define MAGENTA "\033[35m"      /* Magenta */
 #define CYAN    "\033[36m"      /* Cyan */
 #define WHITE   "\033[37m"      /* White */
+
+#define BLACK_BG   "\033[40m"      /* Black background */
+#define RED_BG     "\033[41m"      /* Red background */
+#define GREEN_BG   "\033[42m"      /* Green background */
+#define YELLOW_BG  "\033[43m"      /* Yellow background */
+#define BLUE_BG    "\033[44m"      /* Blue background */
+#define MAGENTA_BG "\033[45m"      /* Magenta background */
+#define CYAN_BG    "\033[46m"      /* Cyan background */
+#define WHITE_BG   "\033[47m"      /* White background */
+
 #define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
 #define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
