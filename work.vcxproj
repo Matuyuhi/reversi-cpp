@@ -29,11 +29,13 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ReversiBoard.cpp" />
+    <ClCompile Include="src\ReversiGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\cout.h" />
     <ClInclude Include="header\List.h" />
     <ClInclude Include="header\ReversiBoard.h" />
+    <ClInclude Include="header\ReversiGame.h" />
     <ClInclude Include="header\Stone.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
