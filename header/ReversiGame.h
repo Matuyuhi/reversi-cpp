@@ -14,7 +14,7 @@
 /// リバーシのプレイを管理するクラス
 class ReversiGame: ReversiBoard {
 private:
-    static const int boardSize = 8;
+    static constexpr int boardSize = 8;
     bool placeStone(stone color);
 
     void autoPlay(int residueCount, stone startColor);

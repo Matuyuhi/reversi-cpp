@@ -213,7 +213,7 @@ List<std::pair<int, int>> ReversiBoard::getPlaceableCells(stone color) {
     return placeableCells[color];
 }
 
-int ReversiBoard::getStoneCount(stone color) {
+int ReversiBoard::getStoneCount(stone color) const {
     int count = 0;
     for (const std::vector<stone> &row: board) {
         for (const stone &s: row) {
@@ -225,7 +225,7 @@ int ReversiBoard::getStoneCount(stone color) {
     return count;
 }
 
-List<std::pair<int, int>> ReversiBoard::getStoneList(stone color) {
+List<std::pair<int, int>> ReversiBoard::getStoneList(stone color) const {
     List<std::pair<int, int>> stoneList;
     for (int col = 0; col < board.size(); ++col) {
         for (int row = 0; row < board[col].size(); ++row) {
@@ -237,7 +237,7 @@ List<std::pair<int, int>> ReversiBoard::getStoneList(stone color) {
     return stoneList;
 }
 
-std::map<stone, int> ReversiBoard::getStonesCount() {
+std::map<stone, int> ReversiBoard::getStonesCount() const {
     std::map<stone, int> stonesCount;
     stonesCount[stone::Black] = 0;
     stonesCount[stone::White] = 0;
