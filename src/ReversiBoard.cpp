@@ -182,7 +182,7 @@ void ReversiBoard::printBoard(stone mine) {
             switch (board[row][col]) {
                 case stone::Empty: {
                     if (placeableCells[mine].contains({row, col})) {
-                        std::cout << RED_BG ;
+                        std::cout << CYAN_BG ;
                     }
                     std::cout << ". ";
                     break;
@@ -198,7 +198,7 @@ void ReversiBoard::printBoard(stone mine) {
                     if (flippedCells[stone::White] == std::make_pair(row, col)) {
                         std::cout << RESET << MAGENTA_BG;
                     }
-                    std::cout << CYAN << "W ";
+                    std::cout << RED << "W ";
 
                     break;
                 }
