@@ -238,7 +238,7 @@ List<std::pair<int, int>> ReversiBoard::getStoneList(stone color) const {
 }
 
 std::map<stone, int> ReversiBoard::getStonesCount() const {
-    std::map<stone, int> stonesCount;
+    std::map<stone, int> stonesCount = std::map<stone, int>();
     stonesCount[stone::Black] = 0;
     stonesCount[stone::White] = 0;
     stonesCount[stone::Empty] = 0;

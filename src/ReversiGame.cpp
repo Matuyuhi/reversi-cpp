@@ -125,6 +125,10 @@ void ReversiGame::gameFinished() {
         }
     }
     std::cout << "//----------------//" << std::endl;
+    std::map<stone, int> stonesCount = getStonesCount();
+    std::cout << std::format("{:<21} {}\n", "プレイヤーの石の数:", stonesCount[stone::Black]);
+    std::cout << std::format("{:<21} {}\n", "COMの石の数:", stonesCount[stone::White]);
+    std::cout << "//----------------//" << std::endl;
 }
 
 void ReversiGame::autoPlay(int residueCount, stone startColor) {

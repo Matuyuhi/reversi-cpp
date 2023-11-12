@@ -10,6 +10,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <ctime>
+#include <format>
 
 /// リバーシのプレイを管理するクラス
 class ReversiGame: ReversiBoard {
