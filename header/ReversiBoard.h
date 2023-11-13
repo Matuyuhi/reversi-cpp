@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <map>
+#include <queue>
+
 #include "Stone.h"
 #include "List.h"
 #include "cout.h"
@@ -23,10 +25,12 @@ private:
     /// 直後にひっくり返したマス
     std::map<stone, std::pair<int, int>> flippedCells;
 
+    std::deque<std::pair<std::pair<int, int>, List<std::pair<int, int>>>> moveHistory;
+
     /// 8方向のベクトル
     const std::vector<std::pair<int, int>> directions = {
-            {0, 1}, {1, 0}, {0, -1}, {-1, 0},
-            {1, 1}, {-1, -1}, {1, -1}, {-1, 1}
+        {0, 1}, {1, 0}, {0, -1}, {-1, 0},
+        {1, 1}, {-1, -1}, {1, -1}, {-1, 1}
     };
 
     /// ボードの初期化処理
@@ -46,7 +50,7 @@ private:
     /// @param color 置く石の色
     /// @param dir 方向
     /// @return 指定方向に石を置けるかどうかの判定
-    bool isCanPlaceWithDirection(int row, int col, stone color, std::pair<int, int> dir);
+    bool isCanPlaceWithDirection(int row, int col, stone color, std::pair<int, int> dir) const;
 
     /// 現在のリストを再度確認するメソッド
     /// @param list 確認するリスト
@@ -73,27 +77,42 @@ protected:
     void updatePlaceableCells(int row, int col);
 
 public:
-
     /// デフォルトの8マスで初期化するメソッド
     ReversiBoard();
 
     /// ボードのサイズを指定してボードを初期化するコンストラクタ
     /// @param size ボードのサイズ
-    explicit ReversiBoard(int size);
+    ReversiBoard(int size);
+
+    ReversiBoard(const ReversiBoard&reversiBoard);
+
+    ReversiBoard& operator=(const ReversiBoard&other) {
+        if (this != &other) {
+            boardSize = other.boardSize;
+            placeableCells = other.placeableCells;
+            flippedCells = other.flippedCells;
+            board = other.board;
+            // 他の必要なメンバーのコピー
+        }
+        return *this;
+    }
 
     /// 指定されたマスに石を置くメソッド
     /// @param row 置くマスの行番号 0~(n-1)
     /// @param col 置くマスの列番号 0~(n-1)
     /// @param color 置く石の色
+    /// @param isUpdate 置いた後におけるマスを更新するかどうか
     /// @return 石を置けたかどうか
-    bool placeStone(int row, int col, stone color);
+    bool placeStone(int row, int col, stone color, bool isUpdate = true);
+
+    bool undoPlaceStone();
 
     /// 指定されたマスに石を置けるかどうかをチェックするメソッド
     /// @param row 置くマスの行番号 0~(n-1)
     /// @param col 置くマスの列番号 0~(n-1)
     /// @param color 置く石の色
     /// @return 石を置けるかどうか
-    bool isCanPlace(int row, int col, stone color);
+    bool isCanPlace(int row, int col, stone color) const;
 
     /// 指定方向の石をひっくり返すメソッド
     /// チェック済前提
@@ -101,12 +120,15 @@ public:
     /// @param col 置くマスの列番号 0~(n-1)
     /// @param color 置く石の色
     /// @param dir 方向
-    void flip(int row, int col, stone color, std::pair<int, int> dir);
+    /// @return 返した石の一覧
+    List<std::pair<int, int>> flip(int row, int col, stone color, std::pair<int, int> dir);
 
 
     /// 現在のボードを出力するメソッド
     /// @param mine 自分の石の色
     void printBoard(stone mine);
+
+    stone getStoneAt(int row, int col) const { return board[row][col]; }
 
     /// 配置可能なマスの一覧を取得するメソッド
     /// @param color 石の色
@@ -129,6 +151,15 @@ public:
     /// ゲームの終了条件
     /// @return ゲームが終了したかどうか
     bool finished();
+
+    inline int getBoardSize() const { return boardSize; }
+
+    inline std::vector<std::pair<int, int>> getDirections() const { return directions; }
+
+    ReversiBoard copy() const {
+        ReversiBoard copied = ReversiBoard(boardSize);
+        return copied;
+    }
 };
 
 

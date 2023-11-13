@@ -27,16 +27,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AIPlayer.cpp" />
+    <ClCompile Include="src\InputPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ReversiAI.cpp" />
     <ClCompile Include="src\ReversiBoard.cpp" />
     <ClCompile Include="src\ReversiGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\AIPlayer.h" />
     <ClInclude Include="header\cout.h" />
+    <ClInclude Include="header\InputPlayer.h" />
+    <ClInclude Include="header\IPlayer.h" />
     <ClInclude Include="header\List.h" />
+    <ClInclude Include="header\ReversiAI.h" />
     <ClInclude Include="header\ReversiBoard.h" />
     <ClInclude Include="header\ReversiGame.h" />
     <ClInclude Include="header\Stone.h" />
+    <ClInclude Include="header\TurnState.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

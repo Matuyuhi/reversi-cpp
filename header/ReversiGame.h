@@ -7,27 +7,33 @@
 
 
 #include "ReversiBoard.h"
-#include <sstream>
+#include "../header/AIPlayer.h"
+#include "../header/InputPlayer.h"
+#include "ReversiAI.h"
+#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <format>
 
+#include "IPlayer.h"
+
 /// リバーシのプレイを管理するクラス
-class ReversiGame: ReversiBoard {
+class ReversiGame : ReversiBoard {
 private:
+    static constexpr stone playerStone = stone::Black;
     static constexpr int boardSize = 8;
-    bool placeStone(stone color);
 
-    void autoPlay(int residueCount, stone startColor);
+    std::map<stone, IPlayer *> players;
+    // bool placeStone(stone color);
 
-    static std::pair<int, std::string> getInputNumbers();
+    //void autoPlay(int residueCount, stone startColor);
 
     void gameFinished();
+
 public:
     ReversiGame();
 
     void Start();
-
 };
 
 

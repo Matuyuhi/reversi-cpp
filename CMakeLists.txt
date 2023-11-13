@@ -12,4 +12,12 @@ add_executable(work src/main.cpp
         header/cout.h
         src/ReversiGame.cpp
         header/ReversiGame.h
+        src/ReversiAI.cpp
+        header/ReversiAI.h
+        header/IPlayer.h
+        src/AIPlayer.cpp
+        header/AIPlayer.h
+        src/InputPlayer.cpp
+        header/InputPlayer.h
+        header/TurnState.h
 )

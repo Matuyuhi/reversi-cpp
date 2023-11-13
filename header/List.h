@@ -56,6 +56,39 @@ public:
     T& operator[](int index) {
         return placeableCells[index];
     }
+
+    List<T>& operator+=(const List<T>& other) {
+        for (const auto& item : other.placeableCells) {
+            placeableCells.push_back(item);
+        }
+        return *this;
+    }
+
+    List<T>& operator+=(const T& item) {
+        placeableCells.push_back(item);
+        return *this;
+    }
+
+    // イテレータを返すbeginメソッド
+    auto begin() -> decltype(placeableCells.begin()) {
+        return placeableCells.begin();
+    }
+
+    // イテレータを返すendメソッド
+    auto end() -> decltype(placeableCells.end()) {
+        return placeableCells.end();
+    }
+
+    // constイテレータを返すbeginメソッド
+    auto begin() const -> decltype(placeableCells.begin()) {
+        return placeableCells.begin();
+    }
+
+    // constイテレータを返すendメソッド
+    auto end() const -> decltype(placeableCells.end()) {
+        return placeableCells.end();
+    }
+
 };
 
 

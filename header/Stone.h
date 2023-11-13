@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+
 // リバーシの石の状態を表すenum
 enum class stone {
     Empty,
@@ -20,6 +21,18 @@ inline stone operator!(stone s) {
         case stone::White: return stone::Black;
         default: return stone::Empty;
     }
+}
+
+inline std::ostream& operator<<(std::ostream&os, stone s) {
+    switch (s) {
+        case stone::Black: os << "Black";
+            break;
+        case stone::White: os << "Wihte";
+            break;
+        default: os << "Empty";
+            break;
+    }
+    return os;
 }
 
 inline std::string printStone(stone s) {
