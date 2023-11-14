@@ -4,9 +4,6 @@
 
 #include "../header/ReversiAI.h"
 
-#include <climits>
-#include <future>
-
 std::pair<int, int> ReversiAI::chooseMove() {
     List<std::pair<int, int>> placeable = board.getPlaceableCells(myColor);
 
@@ -19,7 +16,8 @@ std::pair<int, int> ReversiAI::chooseMove() {
         futures.push_back(std::async(std::launch::async, [cell, this] {
             ReversiBoard boardCopy = board.copy(); // ボードのコピーを作成
             boardCopy.placeStone(cell.first, cell.second, myColor);
-            int score = minimax(boardCopy, 7, INT_MIN, INT_MAX, false);
+            int score = minimax(boardCopy, depth, INT_MIN, INT_MAX, false);
+            boardCopy.undoPlaceStone();
             return std::make_pair(score, cell);
         }));
     }
@@ -50,71 +48,77 @@ std::pair<int, int> ReversiAI::chooseMove() {
 
 int ReversiAI::evaluateBoard(ReversiBoard&board) {
     int score = 0;
-    int boardSize = board.getBoardSize();
+    const int boardSize = board.getBoardSize();
 
     // 角の占有は高い価値を持つ
-    std::vector<std::pair<int, int>> corners = {
+    const std::vector<std::pair<int, int>> corners = {
         {0, 0}, {0, boardSize - 1}, {boardSize - 1, 0}, {boardSize - 1, boardSize - 1}
     };
-    for (const auto&corner: corners) {
-        stone cornerStone = board.getStoneAt(corner.first, corner.second);
-        if (cornerStone == stone::Black) score += 100;
-        else if (cornerStone == stone::White) score -= 100;
+    for (const std::pair<int, int>&corner: corners) {
+        const stone cornerStone = board.getStoneAt(corner.first, corner.second);
+        if (cornerStone == stone::Black) score += 200;
+        else if (cornerStone == stone::White) score -= 200;
     }
 
     // 角の近くのセルに対するスコア調整
-    std::vector<std::pair<int, int>> adjacentToCorners = {
+    const std::vector<std::pair<int, int>> adjacentToCorners = {
         {0, 1}, {1, 0}, {1, 1},
         {0, boardSize - 2}, {1, boardSize - 1}, {1, boardSize - 2},
         {boardSize - 2, 0}, {boardSize - 1, 1}, {boardSize - 2, 1},
         {boardSize - 1, boardSize - 2}, {boardSize - 2, boardSize - 1}, {boardSize - 2, boardSize - 2}
     };
 
-    for (const auto&pos: adjacentToCorners) {
+    for (const std::pair<int, int>&pos: adjacentToCorners) {
         stone adjStone = board.getStoneAt(pos.first, pos.second);
-        if (adjStone == stone::Black) score -= 25;
-        else if (adjStone == stone::White) score += 25;
+        if (adjStone == stone::Black) score -= 100;
+        else if (adjStone == stone::White) score += 100;
     }
 
     // 辺のセルのスコア加算
     for (int i = 0; i < boardSize; ++i) {
         std::vector<std::pair<int, int>> edges = {{0, i}, {i, 0}, {boardSize - 1, i}, {i, boardSize - 1}};
-        for (const auto&edge: edges) {
+        for (const std::pair<int, int>&edge: edges) {
             stone edgeStone = board.getStoneAt(edge.first, edge.second);
-            if (edgeStone == stone::Black) score += 5;
-            else if (edgeStone == stone::White) score -= 5;
+            if (edgeStone == stone::Black) score += 10;
+            else if (edgeStone == stone::White) score -= 10;
         }
     }
 
     // ボード上の全ての石を評価
     for (int row = 0; row < boardSize; ++row) {
         for (int col = 0; col < boardSize; ++col) {
-            stone currentStone = board.getStoneAt(row, col);
-            if (currentStone == stone::Black) score += 1;
-            else if (currentStone == stone::White) score -= 1;
+            const stone currentStone = board.getStoneAt(row, col);
+            if (currentStone == stone::Black) score += 5;
+            else if (currentStone == stone::White) score -= 5;
         }
     }
 
     // 相手の移動可能性を減らすことで得られるスコア
-    const int blackMoves = board.getPlaceableCells(stone::Black).size();
-    const int whiteMoves = board.getPlaceableCells(stone::White).size();
+    const int myMoves = board.getPlaceableCells(myColor).size();
+    const int otherMoves = board.getPlaceableCells(!myColor).size();
 
-    score += (whiteMoves - blackMoves) * 10;
+    score += (myMoves - otherMoves) * 50;
 
-    // 他の戦略的要素を加味する場合はここに追加する
-    // 例えば、安定した石の数、辺の占有、移動可能性の削減など
+    // 相手が動けなければ高得点
+    if (otherMoves == 0) {
+        score += 500;
+    }
 
     return score;
 }
 
-int ReversiAI::minimax(ReversiBoard&board, int depth, int alpha, int beta, bool maximizingPlayer) {
+int ReversiAI::minimax(ReversiBoard& board, const int depth, int alpha, int beta, bool maximizingPlayer) {
+    // std::cout << "depth: " << depth << std::endl;
     if (depth == 0 || board.finished()) {
         return evaluateBoard(board); // ボードの評価
     }
-
+    // std::cout << "評価開始" << std::endl;
+    // board.printBoard(maximizingPlayer ? myColor : !myColor);
     if (maximizingPlayer) {
         int maxEval = INT_MIN;
-        for (const auto&move: board.getPlaceableCells(!myColor)) {
+        const List<std::pair<int, int>> list = board.getPlaceableCells(!myColor);
+        // list.printList();
+        for (const std::pair<int, int>&move: list) {
             board.placeStone(move.first, move.second, !myColor);
             int eval = minimax(board, depth - 1, alpha, beta, false);
             board.undoPlaceStone();
@@ -127,7 +131,9 @@ int ReversiAI::minimax(ReversiBoard&board, int depth, int alpha, int beta, bool 
     }
     else {
         int minEval = INT_MAX;
-        for (const auto&move: board.getPlaceableCells(myColor)) {
+        const List<std::pair<int, int>> list = board.getPlaceableCells(myColor);
+        // list.printList();
+        for (const std::pair<int, int>&move: list) {
             board.placeStone(move.first, move.second, myColor);
             int eval = minimax(board, depth - 1, alpha, beta, true);
             board.undoPlaceStone();

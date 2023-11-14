@@ -10,6 +10,8 @@ TurnState InputPlayer::make() {
         std::cout << "おけるマスがありません" << std::endl;
         return TurnState::Defalut;
     }
+    std::cout << "石を置く場所を入力してください" << std::endl;
+    std::cout << "特殊コマンド a: 残り"<< inAutoSwitchCount <<"マスまで自動入力 q: 終了" << std::endl;
     while (true) {
         int row, col;
         if (!isAuto) {
@@ -50,7 +52,7 @@ TurnState InputPlayer::make() {
             }
         }
         else {
-            if (reversiBoard->getStoneCount(stone::Empty) <= inAutoSwitchCount) {
+            if (reversiBoard->getStoneCount(stone::Empty) <= inAutoSwitchCount + 1) {
                 isAuto = false;
                 std::cout << "残りマスが" << inAutoSwitchCount << "つになったので、手動モードに切り替えます" << std::endl;
                 continue;

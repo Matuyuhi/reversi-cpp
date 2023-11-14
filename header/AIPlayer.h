@@ -9,12 +9,11 @@
 #include "TurnState.h"
 
 
-class AIPlayer : public IPlayer {
+class AIPlayer final : public IPlayer {
 public:
     TurnState make() override;
 
-    AIPlayer(ReversiBoard* reversiBoard, stone color): IPlayer(reversiBoard, color) {
-    }
+    AIPlayer(ReversiBoard* reversiBoard, const stone color): IPlayer(reversiBoard, color) {}
 };
 
 

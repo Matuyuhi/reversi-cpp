@@ -7,12 +7,10 @@
 
 #include <vector>
 #include <algorithm>
-#include <utility>
 #include <iostream>
 
 template <typename T>
 class List {
-private:
     std::vector<T> placeableCells;
 public:
     /// pointをリストに追加
@@ -57,14 +55,14 @@ public:
         return placeableCells[index];
     }
 
-    List<T>& operator+=(const List<T>& other) {
+    List& operator+=(const List& other) {
         for (const auto& item : other.placeableCells) {
             placeableCells.push_back(item);
         }
         return *this;
     }
 
-    List<T>& operator+=(const T& item) {
+    List& operator+=(const T& item) {
         placeableCells.push_back(item);
         return *this;
     }

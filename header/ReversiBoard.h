@@ -15,7 +15,6 @@
 
 /// リバーシのボードを管理するクラス
 class ReversiBoard {
-private:
     /// ボードのサイズ
     int boardSize;
 
@@ -32,10 +31,6 @@ private:
         {0, 1}, {1, 0}, {0, -1}, {-1, 0},
         {1, 1}, {-1, -1}, {1, -1}, {-1, 1}
     };
-
-    /// ボードの初期化処理
-    /// 中心に石配置+そのほかの準備
-    void Initialized();
 
     /// 指定Stoneの置けるマス一覧を更新するメソッド
     /// @param row 置いたマスの行番号 0~(n-1)
@@ -68,6 +63,11 @@ private:
     void updatePlaceableCellsInList(stone color);
 
 protected:
+
+    /// ボードの初期化処理
+    /// 中心に石配置+そのほかの準備
+    void Initialized();
+
     /// ボード
     std::vector<std::vector<stone>> board;
 
@@ -82,7 +82,7 @@ public:
 
     /// ボードのサイズを指定してボードを初期化するコンストラクタ
     /// @param size ボードのサイズ
-    ReversiBoard(int size);
+    explicit ReversiBoard(int size);
 
     ReversiBoard(const ReversiBoard&reversiBoard);
 
@@ -92,7 +92,7 @@ public:
             placeableCells = other.placeableCells;
             flippedCells = other.flippedCells;
             board = other.board;
-            // 他の必要なメンバーのコピー
+            moveHistory = other.moveHistory;
         }
         return *this;
     }
@@ -128,7 +128,7 @@ public:
     /// @param mine 自分の石の色
     void printBoard(stone mine);
 
-    stone getStoneAt(int row, int col) const { return board[row][col]; }
+    stone getStoneAt(const int row, const int col) const { return board[row][col]; }
 
     /// 配置可能なマスの一覧を取得するメソッド
     /// @param color 石の色
@@ -152,12 +152,21 @@ public:
     /// @return ゲームが終了したかどうか
     bool finished();
 
-    inline int getBoardSize() const { return boardSize; }
 
-    inline std::vector<std::pair<int, int>> getDirections() const { return directions; }
+    /**
+     * @brief ボードサイズを取得するメソッド
+     * @return ボードサイズ
+     */
+    int getBoardSize() const { return boardSize; }
 
+    /// 探索する８方向を返す
+    /// @return 8方向のベクトル
+    std::vector<std::pair<int, int>> getDirections() const { return directions; }
+
+    /// ボードのコピーを返す
+    /// @return ボードのコピー
     ReversiBoard copy() const {
-        ReversiBoard copied = ReversiBoard(boardSize);
+        ReversiBoard copied = ReversiBoard(*this);
         return copied;
     }
 };

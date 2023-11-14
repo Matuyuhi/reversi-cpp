@@ -9,13 +9,8 @@
 #include "ReversiBoard.h"
 #include "../header/AIPlayer.h"
 #include "../header/InputPlayer.h"
-#include "ReversiAI.h"
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
 #include <format>
-
-#include "IPlayer.h"
 
 /// リバーシのプレイを管理するクラス
 class ReversiGame : ReversiBoard {
@@ -24,16 +19,31 @@ private:
     static constexpr int boardSize = 8;
 
     std::map<stone, IPlayer *> players;
-    // bool placeStone(stone color);
 
-    //void autoPlay(int residueCount, stone startColor);
 
     void gameFinished();
 
+    static void spacer() { std::cout << "//----------------//" << std::endl; }
+
+
 public:
+    /// 終了時のステータス
+    enum class FinishedState {
+        Restart,
+        Quit,
+        Error
+    };
+
     ReversiGame();
 
-    void Start();
+    /// 再スタート前の初期化処理
+    void Clear();
+
+    /// ゲームを開始するメソッド
+    /// @return 終了ステータス
+    FinishedState Start();
+
+    ~ReversiGame();
 };
 
 

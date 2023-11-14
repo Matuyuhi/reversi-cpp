@@ -10,8 +10,7 @@
 #include <sstream>
 
 
-class InputPlayer : public IPlayer {
-private:
+class InputPlayer final : public IPlayer {
     /// 空いたマスが指定以下で手動に切り替える
     static constexpr int inAutoSwitchCount = 4;
     bool isAuto = false;
@@ -21,7 +20,7 @@ private:
 public:
     TurnState make() override;
 
-    InputPlayer(ReversiBoard* reversiBoard, stone color): IPlayer(reversiBoard, color) {
+    InputPlayer(ReversiBoard* reversiBoard, const stone color): IPlayer(reversiBoard, color) {
     }
 };
 

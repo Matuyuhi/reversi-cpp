@@ -31,6 +31,8 @@ void ReversiBoard::Initialized() {
 
     flippedCells[stone::Black] = {-1, -1};
     flippedCells[stone::White] = {-1, -1};
+
+    moveHistory.clear();
 }
 
 bool ReversiBoard::placeStone(int row, int col, const stone color, bool isUpdate) {
@@ -298,7 +300,7 @@ bool ReversiBoard::finished() {
     return
             /// 空きマスがあるかどうか
             getStoneCount(stone::Empty) == 0 ||
-            /// 黒が置けるかどうか
+            // 黒が置けるかどうか
             (getPlaceableCells(stone::Black).size() == 0 &&
              /// 白が置けるかどうか
              getPlaceableCells(stone::White).size() == 0);

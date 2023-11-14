@@ -15,7 +15,7 @@ enum class stone {
     White
 };
 
-inline stone operator!(stone s) {
+inline stone operator!(const stone s) {
     switch (s) {
         case stone::Black: return stone::White;
         case stone::White: return stone::Black;
@@ -23,7 +23,7 @@ inline stone operator!(stone s) {
     }
 }
 
-inline std::ostream& operator<<(std::ostream&os, stone s) {
+inline std::ostream& operator<<(std::ostream&os, const stone s) {
     switch (s) {
         case stone::Black: os << "Black";
             break;
@@ -35,7 +35,7 @@ inline std::ostream& operator<<(std::ostream&os, stone s) {
     return os;
 }
 
-inline std::string printStone(stone s) {
+inline std::string printStone(const stone s) {
     switch (s) {
         case stone::Black: return "B ";
         case stone::White: return "W ";

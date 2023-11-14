@@ -15,6 +15,8 @@ protected:
     stone color;
 
 public:
+    virtual ~IPlayer() = default;
+
     virtual TurnState make() = 0;
 
     IPlayer(ReversiBoard* reversiBoard, stone color) {
