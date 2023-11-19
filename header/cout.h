@@ -1,5 +1,6 @@
 //
 // Created by matuyuhi on 2023/11/08.
+// コンソール表示の色を定義するヘッダファイル
 //
 
 #ifndef WORK01_COUT_H

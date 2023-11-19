@@ -7,15 +7,18 @@ int main() {
     ReversiGame* game = new ReversiGame();
     while (true) {
         const ReversiGame::FinishedState res = game->Start();
-        if (res == ReversiGame::FinishedState::Restart) {
-            game->Clear();
-            continue;
-        }
-        if (res == ReversiGame::FinishedState::Quit) {
+        //　例外
+        if (res == ReversiGame::FinishedState::Error) {
+            std::cout << "エラーが発生しました" << std::endl;
             break;
         }
-        std::cout << "エラーが発生しました" << std::endl;
-        break;
+        // 終わり
+        if (res == ReversiGame::FinishedState::Quit) {
+            std::cout << "終了します" << std::endl;
+            break;
+        }
+        // 再スタート
+        game->Clear();
     }
     delete game;
 

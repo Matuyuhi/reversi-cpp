@@ -17,9 +17,11 @@ protected:
 public:
     virtual ~IPlayer() = default;
 
+    /// 手を打つ
+    /// @return ターン終了時のステート
     virtual TurnState make() = 0;
 
-    IPlayer(ReversiBoard* reversiBoard, stone color) {
+    IPlayer(ReversiBoard* reversiBoard, const stone color) {
         this->reversiBoard = reversiBoard;
         this->color = color;
     }

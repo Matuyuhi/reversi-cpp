@@ -8,12 +8,15 @@
 #include "ReversiAI.h"
 #include "TurnState.h"
 
-
+/**
+ * @brief 相手用のクラス
+ */
 class AIPlayer final : public IPlayer {
 public:
     TurnState make() override;
 
-    AIPlayer(ReversiBoard* reversiBoard, const stone color): IPlayer(reversiBoard, color) {}
+    AIPlayer(ReversiBoard* reversiBoard, const stone color): IPlayer(reversiBoard, color) {
+    }
 };
 
 

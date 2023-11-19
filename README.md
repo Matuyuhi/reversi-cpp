@@ -9,7 +9,7 @@ c++のリバーシ
 - g++13
 
 ## How to run
-`cmake` or `docker` or `Visual Studio 2022`
+`cmake` or `Visual Studio 2022`
 
 ### in Visual Studio 2022 (recommended)
 - open Visual Studio 2022

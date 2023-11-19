@@ -63,7 +63,6 @@ class ReversiBoard {
     void updatePlaceableCellsInList(stone color);
 
 protected:
-
     /// ボードの初期化処理
     /// 中心に石配置+そのほかの準備
     void Initialized();

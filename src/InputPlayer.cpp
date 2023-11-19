@@ -11,7 +11,7 @@ TurnState InputPlayer::make() {
         return TurnState::Defalut;
     }
     std::cout << "石を置く場所を入力してください" << std::endl;
-    std::cout << "特殊コマンド a: 残り"<< inAutoSwitchCount <<"マスまで自動入力 q: 終了" << std::endl;
+    std::cout << "特殊コマンド a: 残り" << inAutoSwitchCount << "マスまで自動入力 q: 終了" << std::endl;
     while (true) {
         int row, col;
         if (!isAuto) {

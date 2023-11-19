@@ -26,9 +26,9 @@ std::pair<int, int> ReversiAI::chooseMove() {
     std::pair<int, int> bestMove;
     int bestScore = INT_MIN;
     for (auto&f: futures) {
-        auto result = f.get(); // 各 future の結果を取得
-        int score = result.first;
-        std::pair<int, int> cell = result.second;
+        const std::pair<int, std::pair<int, int>> result = f.get(); // 各 future の結果を取得
+        const int score = result.first;
+        const std::pair<int, int> cell = result.second;
         if (score >= bestScore) {
             if (score == bestScore) {
                 if (rand() % 2 == 0) {
@@ -46,7 +46,7 @@ std::pair<int, int> ReversiAI::chooseMove() {
     return bestMove;
 }
 
-int ReversiAI::evaluateBoard(ReversiBoard&board) {
+int ReversiAI::evaluateBoard(ReversiBoard&board) const {
     int score = 0;
     const int boardSize = board.getBoardSize();
 
@@ -107,17 +107,15 @@ int ReversiAI::evaluateBoard(ReversiBoard&board) {
     return score;
 }
 
-int ReversiAI::minimax(ReversiBoard& board, const int depth, int alpha, int beta, bool maximizingPlayer) {
-    // std::cout << "depth: " << depth << std::endl;
+int ReversiAI::minimax(ReversiBoard&board, const int depth, int alpha, int beta, bool maximizingPlayer) {
+    // ボードの評価
     if (depth == 0 || board.finished()) {
-        return evaluateBoard(board); // ボードの評価
+        return evaluateBoard(board);
     }
-    // std::cout << "評価開始" << std::endl;
-    // board.printBoard(maximizingPlayer ? myColor : !myColor);
+
     if (maximizingPlayer) {
         int maxEval = INT_MIN;
         const List<std::pair<int, int>> list = board.getPlaceableCells(!myColor);
-        // list.printList();
         for (const std::pair<int, int>&move: list) {
             board.placeStone(move.first, move.second, !myColor);
             int eval = minimax(board, depth - 1, alpha, beta, false);
@@ -132,7 +130,6 @@ int ReversiAI::minimax(ReversiBoard& board, const int depth, int alpha, int beta
     else {
         int minEval = INT_MAX;
         const List<std::pair<int, int>> list = board.getPlaceableCells(myColor);
-        // list.printList();
         for (const std::pair<int, int>&move: list) {
             board.placeStone(move.first, move.second, myColor);
             int eval = minimax(board, depth - 1, alpha, beta, true);

@@ -21,6 +21,7 @@ private:
     std::map<stone, IPlayer *> players;
 
 
+    /// 終了時の画面表示
     void gameFinished();
 
     static void spacer() { std::cout << "//----------------//" << std::endl; }
@@ -29,8 +30,11 @@ private:
 public:
     /// 終了時のステータス
     enum class FinishedState {
+        /// もう一度遊ぶ
         Restart,
+        /// 終了する
         Quit,
+        /// 例外
         Error
     };
 
