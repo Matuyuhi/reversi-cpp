@@ -32,12 +32,6 @@ class ReversiBoard {
         {1, 1}, {-1, -1}, {1, -1}, {-1, 1}
     };
 
-    /// 指定Stoneの置けるマス一覧を更新するメソッド
-    /// @param row 置いたマスの行番号 0~(n-1)
-    /// @param col 置いたマスの列番号 0~(n-1)
-    /// @param color 置いた石の色
-    void updatePlaceableCellsWithStone(int row, int col, stone color);
-
 
     /// 指定方向に石を置けるかをチェックするメソッド
     /// @param row 置くマスの行番号 0~(n-1)
@@ -58,9 +52,6 @@ class ReversiBoard {
     /// @param color 置く石の色
     void updatePlaceableCell(int row, int col, stone color);
 
-    /// 現在の色リストを再度確認するメソッド
-    /// @param color 石の色
-    void updatePlaceableCellsInList(stone color);
 
 protected:
     /// ボードの初期化処理
@@ -70,10 +61,10 @@ protected:
     /// ボード
     std::vector<std::vector<stone>> board;
 
-    /// おけるマス一覧を更新するメソッド
+    /// 指定Stoneの置けるマス一覧を更新するメソッド
     /// @param row 置いたマスの行番号 0~(n-1)
     /// @param col 置いたマスの列番号 0~(n-1)
-    void updatePlaceableCells(int row, int col);
+    void updatePlaceableCellsWithStone(int row, int col, List<std::pair<int, int>>& cash);
 
 public:
     /// デフォルトの8マスで初期化するメソッド
@@ -142,6 +133,10 @@ public:
     /// 配置されている石ごとの数を取得するメソッド
     /// @return 石ごとの数
     std::map<stone, int> getStonesCount() const;
+
+    /// 現在の色リストを再度確認するメソッド
+    /// @param color 石の色
+    void updatePlaceableCellsInList(stone color);
 
     /// 指定の石の一覧を取得するメソッド
     /// @return 石のリスト

@@ -41,7 +41,6 @@ bool ReversiBoard::placeStone(int row, int col, const stone color, bool isUpdate
     }
 
     List<std::pair<int, int>> flippedStones = List<std::pair<int, int>>();
-    flippedStones.clear();
     bool isFlip = false;
     for (const std::pair<int, int>&dir: directions) {
         if (isCanPlaceWithDirection(row, col, color, dir)) {
@@ -52,13 +51,10 @@ bool ReversiBoard::placeStone(int row, int col, const stone color, bool isUpdate
     if (isFlip) {
         board[row][col] = color;
         flippedCells[color] = {row, col};
-        //        updatePlaceableCells(row, col);
         placeableCells[stone::Black].clear();
         placeableCells[stone::White].clear();
-        updatePlaceableCellsInList(color);
-        updatePlaceableCellsInList(!color);
-        // updatePlaceableCellsWithList(placeableCells[stone::White], stone::White);
-        // updatePlaceableCellsWithList(placeableCells[stone::Black], stone::Black);
+        updatePlaceableCellsInList(stone::White);
+        updatePlaceableCellsInList(stone::Black);
         moveHistory.push_back({{row, col}, flippedStones});
         return true;
     }
@@ -94,8 +90,7 @@ bool ReversiBoard::undoPlaceStone() {
 
 
 void ReversiBoard::updatePlaceableCellsWithList(List<std::pair<int, int>> list, const stone color) {
-    for (int i = 0; i < placeableCells[color].size(); ++i) {
-        std::pair<int, int> p = list[i];
+    for (const std::pair<int, int>& p : placeableCells[color]) {
         if (!isCanPlace(p.first, p.second, color)) {
             placeableCells[color].remove({p.first, p.second});
         }
@@ -104,9 +99,9 @@ void ReversiBoard::updatePlaceableCellsWithList(List<std::pair<int, int>> list, 
 
 void ReversiBoard::updatePlaceableCellsInList(stone color) {
     List<std::pair<int, int>> list = getStoneList(color);
-    for (int i = 0; i < list.size(); ++i) {
-        std::pair<int, int> p = list[i];
-        updatePlaceableCells(p.first, p.second);
+    List<std::pair<int, int>> cash = List<std::pair<int, int>>();
+    for (const std::pair<int, int>& p : list) {
+        updatePlaceableCellsWithStone(p.first, p.second, cash);
     }
 }
 
@@ -135,19 +130,19 @@ List<std::pair<int, int>> ReversiBoard::flip(int row, int col, const stone color
     return flippedStones;
 }
 
-void ReversiBoard::updatePlaceableCells(const int row, const int col) {
-    updatePlaceableCellsWithStone(row, col, stone::Black);
-    updatePlaceableCellsWithStone(row, col, stone::White);
-}
-
-void ReversiBoard::updatePlaceableCellsWithStone(const int row, const int col, const stone color) {
+void ReversiBoard::updatePlaceableCellsWithStone(const int row, const int col, List<std::pair<int, int>>& cash) {
     for (const std::pair<int, int>&dir: directions) {
         const int r = row + dir.first;
         const int c = col + dir.second;
+        if (cash.contains({r, c})) {
+            continue;
+        }
         if (r < 0 || r >= boardSize || c < 0 || c >= boardSize) {
             continue;
         }
-        updatePlaceableCell(r, c, color);
+        updatePlaceableCell(r, c, stone::Black);
+        updatePlaceableCell(r, c, stone::White);
+        cash.add({r, c});
     }
 }
 
@@ -161,9 +156,7 @@ void ReversiBoard::updatePlaceableCell(int row, int col, const stone color) {
     }
 
     if (isCanPlaced && board[row][col] == stone::Empty) {
-        if (!placeableCells[color].contains({row, col})) {
-            placeableCells[color].add({row, col});
-        }
+        placeableCells[color].add({row, col});
     }
     else {
         placeableCells[color].remove({row, col});
