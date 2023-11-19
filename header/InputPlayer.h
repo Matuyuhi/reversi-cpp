@@ -7,7 +7,7 @@
 #include "IPlayer.h"
 #include "ReversiAI.h"
 #include "TurnState.h"
-#include <sstream>
+
 
 /// playerの手を入力するクラス
 class InputPlayer final : public IPlayer {

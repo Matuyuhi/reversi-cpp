@@ -10,7 +10,6 @@
 #include "../header/AIPlayer.h"
 #include "../header/InputPlayer.h"
 #include <iostream>
-#include <format>
 
 /// リバーシのプレイを管理するクラス
 class ReversiGame : ReversiBoard {

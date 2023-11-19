@@ -3,42 +3,54 @@
 //
 
 #include "../header/ReversiAI.h"
+#include <climits>
+#include <future>
 
 std::pair<int, int> ReversiAI::chooseMove() {
     List<std::pair<int, int>> placeable = board.getPlaceableCells(myColor);
 
-    // 各手の評価値を計算するための future を格納するベクター
-    std::vector<std::future<std::pair<int, std::pair<int, int>>>> futures;
-
-    // 並列に各手を評価
-    for (int i = 0; i < placeable.size(); i++) {
-        std::pair<int, int> cell = placeable[i];
-        futures.push_back(std::async(std::launch::async, [cell, this] {
-            ReversiBoard boardCopy = board.copy(); // ボードのコピーを作成
-            boardCopy.placeStone(cell.first, cell.second, myColor);
-            int score = minimax(boardCopy, depth, INT_MIN, INT_MAX, false);
-            boardCopy.undoPlaceStone();
-            return std::make_pair(score, cell);
-        }));
-    }
-
-    // 最も良い手を見つける
     std::pair<int, int> bestMove;
     int bestScore = INT_MIN;
-    for (auto&f: futures) {
-        const std::pair<int, std::pair<int, int>> result = f.get(); // 各 future の結果を取得
-        const int score = result.first;
-        const std::pair<int, int> cell = result.second;
-        if (score >= bestScore) {
-            if (score == bestScore) {
-                if (rand() % 2 == 0) {
-                    bestScore = score;
-                    bestMove = cell;
-                }
-            }
-            else {
+
+
+    const unsigned int numCores = std::thread::hardware_concurrency();
+    const unsigned int numTasks = placeable.size();
+    unsigned int batchSize = numTasks / numCores;
+
+    // 最小サイズ
+    constexpr unsigned int minBatchSize = 1;
+
+    batchSize = std::max(minBatchSize, batchSize);
+
+    // タスクの総数がCPUコア数より少ない場合、batchSizeを1に設定
+    if (numTasks < numCores) {
+        batchSize = 1;
+    }
+
+    for (int start = 0; start < numTasks; start += batchSize) {
+        int end = std::min(numTasks, start + batchSize);
+        std::vector<std::future<std::pair<int, std::pair<int, int>>>> futures;
+
+        auto it = placeable.begin();
+        std::advance(it, start);  // イテレータをstartの位置まで進める
+
+        for (int i = start; i < end && it != placeable.end(); ++i, ++it) {
+            std::pair<int, int> cell = *it;
+            futures.push_back(std::async(std::launch::async, [cell, this] {
+                ReversiBoard boardCopy = board.copy();
+                boardCopy.placeStone(cell.first, cell.second, myColor);
+                int score = minimax(boardCopy, depth, INT_MIN, INT_MAX, false);
+                return std::make_pair(score, cell);
+            }));
+        }
+
+        for (auto& f : futures) {
+            auto result = f.get();
+            int score = result.first;
+            if (score >= bestScore) {
+                if (score == bestScore && rand() % 2 == 0) continue;
                 bestScore = score;
-                bestMove = cell;
+                bestMove = result.second;
             }
         }
     }

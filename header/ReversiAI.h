@@ -6,8 +6,6 @@
 
 #include "ReversiGame.h"
 #include "../header/ReversiBoard.h"
-#include <climits>
-#include <future>
 
 /**
  * @brief 各手を評価して最適な位置を返すクラス
@@ -17,9 +15,8 @@ class ReversiAI {
     ReversiBoard&board;
 
     /// 探索する深度(depth手先まで読む)
-    /// 実行するCPUの性能によって変更する
-    /// 3が一番良い
-    static constexpr int depth = 3;
+    /// 実行するCPUの性能によって変更すると良い
+    static constexpr int depth = 2;
 
     /// 現在のボードを評価する
     /// @return スコア

@@ -3,7 +3,7 @@
 //
 
 #include "../header/ReversiGame.h"
-
+#include <format>
 
 ReversiGame::~ReversiGame() {
     delete players[stone::Black];
@@ -26,10 +26,8 @@ void ReversiGame::Clear() {
     board[boardSize / 2][boardSize / 2] = stone::White;
 
     /* 配置した位置に対しておける位置を更新 */
-    updatePlaceableCells(boardSize / 2 - 1, boardSize / 2 - 1);
-    updatePlaceableCells(boardSize / 2 - 1, boardSize / 2);
-    updatePlaceableCells(boardSize / 2, boardSize / 2 - 1);
-    updatePlaceableCells(boardSize / 2, boardSize / 2);
+    updatePlaceableCellsInList(stone::White);
+    updatePlaceableCellsInList(stone::Black);
 }
 
 

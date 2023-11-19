@@ -3,6 +3,7 @@
 //
 
 #include "../header/InputPlayer.h"
+#include <sstream>
 #define INPUT_ERROR_NUMBER 12192438
 
 TurnState InputPlayer::make() {
