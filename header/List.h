@@ -20,7 +20,8 @@ struct PairHash {
 template<typename T>
 class List {
     std::list<T> placeableCells;
-    // 要素の追跡用
+
+    /// 要素の追跡用
     std::unordered_set<T, PairHash> cellSet = std::unordered_set<T, PairHash>(1000);
 
 public:
