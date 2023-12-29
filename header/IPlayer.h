@@ -8,6 +8,7 @@
 #include "ReversiBoard.h"
 #include "Stone.h"
 #include "TurnState.h"
+#include "Input.h"
 
 class IPlayer {
 protected:

@@ -17,9 +17,6 @@ class InputPlayer final : public IPlayer {
     /// 自動入力モードかどうか
     bool isAuto = false;
 
-    /// 入力を受け取る
-    /// @return キャストした数値&入力文字列を返す
-    static std::pair<int, std::string> getInputNumbers();
 
 public:
     TurnState make() override;

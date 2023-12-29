@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\server">
+      <UniqueIdentifier>{c86b22fa-696a-4897-ad31-673503d44895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\server">
+      <UniqueIdentifier>{8984cc51-0edc-49e5-94b4-bf70310c062e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -32,6 +38,18 @@
     </ClCompile>
     <ClCompile Include="src\ReversiAI.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server\NetworkEntity.cpp">
+      <Filter>ソース ファイル\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server\ReversiClient.cpp">
+      <Filter>ソース ファイル\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server\ReversiServer.cpp">
+      <Filter>ソース ファイル\server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +82,18 @@
     </ClInclude>
     <ClInclude Include="header\TurnState.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Input.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="header\server\NetworkEntity.h">
+      <Filter>ヘッダー ファイル\server</Filter>
+    </ClInclude>
+    <ClInclude Include="header\server\ReversiClient.h">
+      <Filter>ヘッダー ファイル\server</Filter>
+    </ClInclude>
+    <ClInclude Include="header\server\ReversiServer.h">
+      <Filter>ヘッダー ファイル\server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

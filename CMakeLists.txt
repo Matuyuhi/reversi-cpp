@@ -20,4 +20,12 @@ add_executable(work src/main.cpp
         src/InputPlayer.cpp
         header/InputPlayer.h
         header/TurnState.h
+        src/Input.cpp
+        header/Input.h
+        src/server/ReversiServer.cpp
+        header/server/ReversiServer.h
+        src/server/NetworkEntity.cpp
+        header/server/NetworkEntity.h
+        src/server/ReversiClient.cpp
+        header/server/ReversiClient.h
 )

@@ -28,21 +28,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AIPlayer.cpp" />
+    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\InputPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ReversiAI.cpp" />
     <ClCompile Include="src\ReversiBoard.cpp" />
     <ClCompile Include="src\ReversiGame.cpp" />
+    <ClCompile Include="src\server\NetworkEntity.cpp" />
+    <ClCompile Include="src\server\ReversiClient.cpp" />
+    <ClCompile Include="src\server\ReversiServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\AIPlayer.h" />
     <ClInclude Include="header\cout.h" />
+    <ClInclude Include="header\Input.h" />
     <ClInclude Include="header\InputPlayer.h" />
     <ClInclude Include="header\IPlayer.h" />
     <ClInclude Include="header\List.h" />
     <ClInclude Include="header\ReversiAI.h" />
     <ClInclude Include="header\ReversiBoard.h" />
     <ClInclude Include="header\ReversiGame.h" />
+    <ClInclude Include="header\server\NetworkEntity.h" />
+    <ClInclude Include="header\server\ReversiClient.h" />
+    <ClInclude Include="header\server\ReversiServer.h" />
     <ClInclude Include="header\Stone.h" />
     <ClInclude Include="header\TurnState.h" />
   </ItemGroup>
