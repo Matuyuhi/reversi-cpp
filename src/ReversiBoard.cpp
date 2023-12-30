@@ -207,7 +207,7 @@ void ReversiBoard::printBoard(const stone mine) {
             for (int i = 0; i < board.size(); ++i) {
                 std::cout << i + 1 << " ";
             }
-            std::cout << std::endl;
+            std::cout << '\n';
         }
         for (int row = 0; row < board[col].size(); ++row) {
             /// row number
@@ -243,7 +243,7 @@ void ReversiBoard::printBoard(const stone mine) {
             }
             std::cout << RESET;
         }
-        std::cout << RESET << std::endl;
+        std::cout << RESET << '\n';
     }
 }
 

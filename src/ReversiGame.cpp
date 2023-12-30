@@ -40,10 +40,10 @@ ReversiGame::FinishedState ReversiGame::Start() {
     while (!finished()) {
         spacer();
         spacer();
-        std::cout << "//* " << (currentPlayer == playerStone ? "あなた" : "相手") << "のターン *//" << std::endl;
+        std::cout << "//* " << (currentPlayer == playerStone ? "あなた" : "相手") << "のターン *//" << '\n';
         TurnState state = players[currentPlayer]->make();
         if (state == TurnState::Quit) {
-            std::cout << "ゲームを強制終了します" << std::endl;
+            std::cout << "ゲームを強制終了します" << '\n';
             break;
         }
 
@@ -54,8 +54,8 @@ ReversiGame::FinishedState ReversiGame::Start() {
     gameFinished();
     spacer();
     spacer();
-    std::cout << "ゲームを終了しますか?" << std::endl;
-    std::cout << "q: 終了する r: もう一度" << std::endl;
+    std::cout << "ゲームを終了しますか?" << '\n';
+    std::cout << "q: 終了する r: もう一度" << '\n';
     while (true) {
         std::cout << "入力: ";
         std::string input;
@@ -66,7 +66,7 @@ ReversiGame::FinishedState ReversiGame::Start() {
         if (input == "r") {
             return FinishedState::Restart;
         }
-        std::cout << "入力が不正です" << std::endl;
+        std::cout << "入力が不正です" << '\n';
     }
     return FinishedState::Error;
 }
@@ -77,26 +77,26 @@ void ReversiGame::gameFinished() {
     if (!getStoneCount(stone::Empty)) {
         // 空きマスがない場合(正常な終了)
         if (getStoneCount(stone::Black) > getStoneCount(stone::White)) {
-            std::cout << "あなたの勝ちです" << std::endl;
+            std::cout << "あなたの勝ちです" << '\n';
         }
         else if (getStoneCount(stone::Black) < getStoneCount(stone::White)) {
-            std::cout << "あなたの負けです" << std::endl;
+            std::cout << "あなたの負けです" << '\n';
         }
         else {
-            std::cout << "引き分けです" << std::endl;
+            std::cout << "引き分けです" << '\n';
         }
     }
     else if (getPlaceableCells(stone::Black).size() == 0 || getPlaceableCells(stone::White).size() == 0) {
         // 空きマスがある場合(異常終了)
-        std::cout << "おけるマスがないため、ゲームを終了します" << std::endl;
+        std::cout << "おけるマスがないため、ゲームを終了します" << '\n';
         if (getStoneCount(stone::Black) > getStoneCount(stone::White)) {
-            std::cout << "あなたの勝ちです" << std::endl;
+            std::cout << "あなたの勝ちです" << '\n';
         }
         else if (getStoneCount(stone::Black) < getStoneCount(stone::White)) {
-            std::cout << "あなたの負けです" << std::endl;
+            std::cout << "あなたの負けです" << '\n';
         }
         else {
-            std::cout << "引き分けです" << std::endl;
+            std::cout << "引き分けです" << '\n';
         }
     }
     spacer();

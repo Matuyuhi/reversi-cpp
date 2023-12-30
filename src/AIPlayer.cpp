@@ -6,7 +6,7 @@
 
 TurnState AIPlayer::make() {
     if (reversiBoard->getPlaceableCells(color).size() == 0) {
-        std::cout << "おけるマスがありません" << std::endl;
+        std::cout << "おけるマスがありません" << '\n';
         return TurnState::Defalut;
     }
     ReversiAI ai = ReversiAI(*reversiBoard, color);
@@ -16,7 +16,7 @@ TurnState AIPlayer::make() {
     // 石を置く
     if (reversiBoard->placeStone(cell.first, cell.second, color)) {
         std::cout << "(縦: " << cell.second + 1 << ", 横: " << cell.first + 1 << ")に";
-        std::cout << "石を置きました" << std::endl;
+        std::cout << "石を置きました" << '\n';
     }
     return TurnState::Defalut;
 }

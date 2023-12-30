@@ -23,7 +23,7 @@ private:
     /// 終了時の画面表示
     void gameFinished();
 
-    static void spacer() { std::cout << "//----------------//" << std::endl; }
+    static void spacer() { std::cout << "//----------------//" << '\n'; }
 
 
 public:
