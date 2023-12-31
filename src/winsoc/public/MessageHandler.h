@@ -17,14 +17,36 @@ namespace winsoc
     class MessageHandler
     {
     public:
-        static int GetConnectedId(const Message& message, int& id)
+        static int GetSingleIntValue(const Message& message, int& id)
         {
             try
             {
-                std::any payload;
-                DeserializePayload(message, payload);
-                id = std::any_cast<int>(payload);
-                return 0;
+                const std::any payload = DeserializePayload(message);
+                if (payload.type() == typeid(int)) {
+                    id = std::any_cast<int>(payload);
+                    return 0;
+                }
+
+                throw std::bad_any_cast();
+            }
+            catch (const std::bad_any_cast& e)
+            {
+                std::cerr << e.what() << '\n';
+                return -1;
+            }
+        }
+
+        static int GetUserList(const Message& message, std::vector<int>& array)
+        {
+            try
+            {
+                const std::any payload = DeserializePayload(message);
+                if (payload.type() == typeid(std::vector<int>)) {
+                    array = std::any_cast<std::vector<int>>(payload);
+                    return 0;
+                }
+
+                throw std::bad_any_cast();
             }
             catch (const std::bad_any_cast& e)
             {
@@ -38,10 +60,14 @@ namespace winsoc
         {
             switch (message.type)
             {
-            case MessageType::GameStart:
-                return PayloadType::Int;
-
             case MessageType::Connected:
+            case MessageType::GameStart:
+            case MessageType::RequestConnectToPlayClient:
+            case MessageType::FailConnectedPlayClient:
+            case MessageType::UserPlayRequested:
+            case MessageType::RequestGameStart:
+                return PayloadType::Int;
+           
             case MessageType::GameEnd:
             case MessageType::UserList:
             case MessageType::Move:
@@ -55,28 +81,27 @@ namespace winsoc
             case MessageType::WaitMove:
             case MessageType::Error:
             case MessageType::RequestMessage:
+            case MessageType::RequestUserList:
                 return PayloadType::String;
             }
+            std::cout << "Unknown PayloadType\n";
             return PayloadType::String;
         }
 
-        static void DeserializePayload(const Message& message, std::any& payload)
+        static std::any DeserializePayload(const Message& message)
         {
             switch (GetPayloadType(message))
             {
             case PayloadType::Int:
-                payload = std::stoi(message.payload);
-                break;
+                return std::stoi(message.payload);
             case PayloadType::IntArray:
-                payload = DeserializeIntArray(message.payload);
-                break;
+                return DeserializeIntArray(message.payload);
             case PayloadType::Coordinates:
-                payload = DeserializeCoordinates(message.payload);
-                break;
+                return DeserializeCoordinates(message.payload);
             case PayloadType::String:
-                payload = message.payload;
-                break;
+                return message.payload;
             }
+            return "";
         }
 
         static std::pair<int, int> DeserializeCoordinates(const std::string& payload)

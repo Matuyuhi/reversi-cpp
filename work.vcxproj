@@ -27,8 +27,8 @@
         </ProjectConfiguration>
     </ItemGroup>
     <ItemGroup>
-        <Content Include="build.bat"/>
-        <Content Include="run.bat"/>
+        <Content Include="resource\build.bat" />
+        <Content Include="resource\run.bat" />
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="src\main.cpp"/>

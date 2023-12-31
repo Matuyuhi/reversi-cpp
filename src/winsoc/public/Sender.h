@@ -42,9 +42,12 @@ namespace winsoc
             Send(socket, Message{MessageType::UserList, payload});
         }
 
-        static void SendGameStart(const SOCKET& socket)
+        /// <summary>
+        /// 参加するclientに開始を宣言する
+        /// </summary>
+        static void SendGameStart(const SOCKET& socket, int id)
         {
-            Send(socket, Message{MessageType::GameStart, ""});
+            Send(socket, Message{MessageType::GameStart, std::to_string(id)});
         }
 
         static void SendWaitMove(const SOCKET& socket)
@@ -68,13 +71,49 @@ namespace winsoc
             std::string payload = SerializeCoordinates(x, y);
             Send(socket, Message{MessageType::RequestMove, payload});
         }
+        static void SendRequestUserList(const SOCKET& socket)
+        {
+            Send(socket, Message{MessageType::RequestUserList, ""});
+        }
+        
+        /// <summary>
+        /// サーバーを介してクライアントに接続要求を送信します。
+        /// </summary>
+        static void SendRequestPlayClient(const SOCKET& socket, int id)
+        {
+            Send(socket, Message{MessageType::RequestConnectToPlayClient, std::to_string(id)});
+        }
+
+        /// <summary>
+        /// ユーザーに対してプレイ要求を送信します。
+        /// </summary>
+        static void SendUserPlayRequested(const SOCKET& socket, int id)
+        {
+            Send(socket, Message{MessageType::UserPlayRequested, std::to_string(id)});
+        }
+
+        /// <summary>
+        /// ユーザーからのプレイ要求を拒否する
+        /// </summary>
+        static void FailConnectedPlayClient(const SOCKET& socket, int id)
+        {
+            Send(socket, Message{MessageType::FailConnectedPlayClient, std::to_string(id)});
+        }
+
+        /// <summary>
+        /// プレイ要求を承諾してサーバーにゲームスタートのリクエストを送信する
+        /// </summary>
+        static void RequestGameStart(const SOCKET& socket, int otherId)
+        {
+            Send(socket, Message{MessageType::RequestGameStart, std::to_string(otherId)});
+        }
 
         static Message Deserialize(const std::string& serialized)
         {
             std::stringstream ss(serialized);
             std::string typeStr;
             std::getline(ss, typeStr, '|');
-            auto type = static_cast<MessageType>(std::stoi(typeStr));
+            MessageType type = MessageTypeUtil::FromString(typeStr);
             std::string payload;
             std::getline(ss, payload);
             return Message{type, payload};
@@ -90,7 +129,7 @@ namespace winsoc
         static std::string Serialize(const Message& message)
         {
             std::stringstream ss;
-            ss << static_cast<int>(message.type) << "|" << message.payload;
+            ss << MessageTypeUtil::ToString(message.type) << "|" << message.payload;
             return ss.str();
         }
 

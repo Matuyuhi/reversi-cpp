@@ -58,6 +58,9 @@
     <ClCompile Include="src\main.cpp">
       <Filter>リソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="src\winsoc\private\MessageHandler.cpp">
+      <Filter>リソース ファイル\winsoc\private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\winsoc\public\NetworkEntity.h">
@@ -104,6 +107,12 @@
     </ClInclude>
     <ClInclude Include="src\riversi\public\TurnState.h">
       <Filter>リソース ファイル\riversi\public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\winsoc\public\Message.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\winsoc\public\MessageHandler.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

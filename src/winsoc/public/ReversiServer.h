@@ -13,54 +13,17 @@
 #include <sstream>
 #include <unordered_map>
 
+#include "MessageHandler.h"
 #include "NetworkEntity.h"
 #include "Sender.h"
+
+#include "../../riversi/public/ReversiBoard.h"
 
 
 namespace winsoc
 {
     class ReversiServer : public NetworkEntity
     {
-    private:
-        enum ClientState
-        {
-            Idle,
-            InRiversi,
-            None
-        };
-
-        using ClientInfo = struct ClientInfo
-        {
-            SOCKET socket = 0;
-            int id = -1;
-            ClientState state = None;
-        };
-
-        std::unordered_map<int, ClientInfo> clientSockets;
-        std::atomic<int> nextClientId{1};
-        std::mutex socketsMutex;
-
-        void AddClient(const ClientInfo& client)
-        {
-            clientSockets[client.id] = client;
-        }
-
-        // クライアントを削除する関数
-        void DeleteClient(int clientId)
-        {
-            // クライアントIDに基づいてエントリを削除
-            clientSockets.erase(clientId);
-        }
-
-        ClientInfo* GetClient(int clientId)
-        {
-            const auto it = clientSockets.find(clientId);
-            if (it != clientSockets.end() && it->second.id == clientId)
-            {
-                return &(it->second);
-            }
-            return nullptr;
-        }
 
     public:
         void Start() override
@@ -92,6 +55,60 @@ namespace winsoc
         }
 
     private:
+        enum ClientState
+        {
+            Idle,
+            InRiversi,
+            None
+        };
+
+        using ClientInfo = struct _ClientInfo
+        {
+            SOCKET socket = 0;
+            int id = -1;
+            ClientState state = None;
+        };
+
+        using SessionInfo = struct _SessionInfo
+        {
+            int clientA = -1;
+            int clientB = -1;
+            int sessionId = -1;
+            ReversiBoard board;
+        };
+
+        std::unordered_map<int, ClientInfo> clientSockets = std::unordered_map<int, ClientInfo>();
+        std::atomic<int> nextClientId{1};
+        std::mutex socketsMutex;
+        std::unordered_map<int, SessionInfo> sessions = std::unordered_map<int, SessionInfo>();
+
+        void AddClient(const ClientInfo& client)
+        {
+            clientSockets[client.id] = client;
+        }
+
+        void AddSession(const SessionInfo& session)
+        {
+            sessions[session.sessionId] = session;
+        }
+
+        // クライアントを削除する関数
+        void DeleteClient(int clientId)
+        {
+            // クライアントIDに基づいてエントリを削除
+            clientSockets.erase(clientId);
+        }
+
+        ClientInfo* GetClient(int clientId)
+        {
+            const auto it = clientSockets.find(clientId);
+            if (it != clientSockets.end() && it->second.id == clientId)
+            {
+                return &(it->second);
+            }
+            return nullptr;
+        }
+        
         void HandleClient(int clientId)
         {
             ClientInfo* client = GetClient(clientId);
@@ -119,11 +136,40 @@ namespace winsoc
                 case MessageType::RequestMessage:
                     SendAllClient(clientId, message.payload);
                     break;
+                case MessageType::RequestUserList:
+                    SendUserList(clientId);
+                    break;
+                case MessageType::RequestConnectToPlayClient:
+                    UserPlayConnectRequest(clientId, message);
+                    break;
+                case MessageType::FailConnectedPlayClient:
+                case MessageType::RequestGameStart:
+                    UserPlayConnectResponse(clientId, message);
+                    break;
                 default:
                     break;
                 }
             }
             CloseClientConnection(clientId);
+        }
+
+        void SendUserList(int clientId) const
+        {
+            if (clientSockets.contains(clientId))
+            {
+                ClientInfo client = clientSockets.at(clientId);
+                std::vector<int> userList;
+                for (std::pair<const int, ClientInfo> client : clientSockets)
+                {
+                    if (clientId == client.first)
+                    {
+                        continue;
+                    }
+                    userList.push_back(client.first);
+                }
+                Sender::SendUserList(client.socket, userList);
+            }
+            // todo Not found user
         }
 
         void SendAllClient(int ownerId, std::string message) const
@@ -138,7 +184,62 @@ namespace winsoc
             }
         }
 
+        void UserPlayConnectRequest(int clientId, Message& message) const
+        {
+            int requestId = 0;
+            if (MessageHandler::GetSingleIntValue(message, requestId))
+            {
+                // todo Bad Request
+                std::cout << "Bad Request\n";
+                return;
+            }
+            if (clientSockets.contains(requestId))
+            {
+                ClientInfo requestClient = clientSockets.at(requestId);
+                Sender::SendUserPlayRequested(requestClient.socket, clientId);
+                return;
+            }
+        }
+    
+        void UserPlayConnectResponse(int clientId, Message& message)
+        {
+            int requestId = -1;
+            if (MessageHandler::GetSingleIntValue(message, requestId))
+            {
+                std::cout << "Bad Request\n";
+                return;
+            }
+            if (clientSockets.contains(requestId))
+            {
+                ClientInfo requestClient = clientSockets.at(requestId);
+                if (message.type == MessageType::RequestGameStart)
+                {
+                   GameStart(clientId, requestId);
+                }
+                else
+                {
+                    Sender::FailConnectedPlayClient(requestClient.socket, clientId);
+                }
+                return;
+            }
+        }
 
+
+        void GameStart(int a, int b)
+        {
+            const ClientInfo clientA = clientSockets.at(a);
+            const ClientInfo clientB = clientSockets.at(b);
+            Sender::SendGameStart(clientA.socket, b);
+            Sender::SendGameStart(clientB.socket, a);
+            int sessionId = static_cast<int>(sessions.size()) + 1;
+            SessionInfo session{
+                a,
+                b,
+                sessionId,
+                ReversiBoard()
+            };
+            AddSession(session);
+        }
         SOCKET SetupListeningSocket() const
         {
             const SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);

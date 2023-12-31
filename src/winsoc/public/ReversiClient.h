@@ -25,18 +25,12 @@ namespace winsoc
             connectSocket = SetupConnection("127.0.0.1");
 
             std::thread receiveThread(&ReversiClient::ReceiveMessages, this);
-            std::string userInput;
             while (running)
             {
 
-                std::cin >> userInput;
+                std::pair<int, std::string> input = Input::getInputNumbers();
 
-                if (userInput == "end")
-                {
-                    running = false;
-                    break;
-                }
-                Sender::SendMsg(connectSocket, userInput);
+                InputHandler(input);
             }
             std::cout << "終了\n";
             receiveThread.join();
@@ -45,8 +39,101 @@ namespace winsoc
         }
 
     private:
+        enum class ClientState
+        {
+            InReversi,
+            Idle,
+            RequestedPlay,
+        };
         SOCKET connectSocket = 0;
+        ClientState state = ClientState::Idle;
         std::atomic<bool> running{true};
+        int userId = -1;
+        int otherId = -1;
+        std::vector<int> currentUserList;
+
+        void InputHandler(std::pair<int, std::string> input)
+        {
+            switch (state)
+            {
+            case ClientState::Idle:
+                IdleInputHandler(input);
+                break;
+            case ClientState::InReversi:
+                InReversiInputHandler(input);
+                break;
+            case ClientState::RequestedPlay:
+                RequestPlayInputHandler(input);
+                break;
+            }
+        }
+
+        void RequestPlayInputHandler(std::pair<int, std::string> input)
+        {
+            if (input.first == 1)
+            {
+                // play
+                std::cout << "対戦を承諾しました。\n";
+                Sender::RequestGameStart(connectSocket, otherId);
+                state = ClientState::InReversi;
+            }
+            else if (input.first == 0)
+            {
+                // fail
+                std::cout << "対戦を拒否しました。\n";
+                Sender::FailConnectedPlayClient(connectSocket, otherId);
+                state = ClientState::Idle;
+            }
+            else
+            {
+                std::cout << "入力が不正です" << '\n';
+            }
+        }
+
+        void IdleInputHandler(std::pair<int, std::string> input)
+        {
+            if (input.second == "end")
+            {
+                running = false;
+                return;
+            }
+
+            if (input.first == INPUT_ERROR_NUMBER)
+            {
+                std::cout << "入力が不正です" << '\n';
+                return;
+            }
+            if (input.first == 0)
+            {
+                Sender::SendRequestUserList(connectSocket);
+                return;
+            }
+            int findId = -1;
+            for (int userId : currentUserList)
+            {
+                if (input.first == userId)
+                {
+                    findId = userId;
+                    break;
+                }
+            }
+            if (findId != -1)
+            {
+                std::cout << findId << "に対して対戦リクエストを送ります。\n";
+                Sender::SendRequestPlayClient(connectSocket, findId);
+                return;
+            }
+            // std::cout << "入力が不正です" << '\n';
+            Sender::SendMsg(connectSocket, input.second);            
+        }
+
+        void InReversiInputHandler(std::pair<int, std::string> input)
+        {
+            if (input.first == 1)
+            {
+               
+            }
+        }
 
         void ReceiveMessages()
         {
@@ -69,13 +156,74 @@ namespace winsoc
                     break;
                 case MessageType::Connected:
                     std::cout << "接続成功\n";
-                    int id;
-                    MessageHandler::GetConnectedId(message, id);
+                    MessageHandler::GetSingleIntValue(message, userId);
+                    std::cout << "あなたのIDは" << userId << "です。\n";
+                    Sender::SendRequestUserList(connectSocket);
                     break;
+                case MessageType::UserList:
+                    GetUserList(message);
+                    break;
+                case MessageType::UserPlayRequested:
+                    GetRequestUserPlay(message);
+                    break;
+                case MessageType::FailConnectedPlayClient:
+                case MessageType::GameStart:
+                    GetPlayUserResponse(message);
                 default:
                     break;
                 }
             }
+        }
+
+        void GetPlayUserResponse(Message message)
+        {
+            int requestId = 0;
+            if (MessageHandler::GetSingleIntValue(message, requestId))
+            {
+                std::cout << "Bad Request\n";
+                return;
+            }
+            if (message.type == MessageType::FailConnectedPlayClient)
+            {
+                // fail
+                std::cout << requestId << "からの対戦リクエストが拒否されました。\n";
+                state = ClientState::Idle;
+                return;
+            } else
+            {
+                // play
+                std::cout << requestId << "からの対戦リクエストが承諾されました。\nゲームを始めます。\n";
+                state = ClientState::InReversi;
+                return;
+            }
+        }
+
+        void GetRequestUserPlay(Message message)
+        {
+            int requestedId = -1;
+            MessageHandler::GetSingleIntValue(message, requestedId);
+            std::cout << requestedId << "からの対戦リクエストが来ました。\n";
+            std::cout << "対戦する場合は1,しない場合は0を入力してください\n入力:";
+            state = ClientState::RequestedPlay;
+            otherId = requestedId;
+        }
+
+        void GetUserList(Message message)
+        {
+            MessageHandler::GetUserList(message, currentUserList);
+            if (currentUserList.empty())
+            {
+                std::cout << "ほかにユーザーがいません。\n";
+            }
+            else
+            {
+                std::cout << "ユーザーリスト:\n";
+                for (int user : currentUserList)
+                {
+                    std::cout << "ClientId: " << user << '\n';
+                }
+            }
+            std::cout << "更新するには0,遊ぶ場合は相手のClientIdを入力してください\n入力:" << '\n';
         }
 
         SOCKET SetupConnection(const std::string& ipAddress) const

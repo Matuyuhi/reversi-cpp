@@ -4,6 +4,7 @@
 
 #ifndef WORK_MESSAGE_H
 #define WORK_MESSAGE_H
+#include <map>
 
 namespace winsoc
 {
@@ -12,6 +13,7 @@ namespace winsoc
         // server
         Connected,
         UserList,
+        UserPlayRequested,
 
         GameStart,
         Move,
@@ -19,6 +21,10 @@ namespace winsoc
         GameEnd,
         Error,
 
+        RequestUserList,
+        RequestConnectToPlayClient,
+        RequestGameStart,
+        FailConnectedPlayClient,
         RequestMove,
         RequestGameEnd,
         Disconnected,
@@ -34,53 +40,55 @@ namespace winsoc
         String,
     };
 
-    struct Message
-    {
-        MessageType type;
-        std::string payload;
+    class MessageTypeUtil {
+    private:
+        inline static const std::map<MessageType, std::string> messageTypeToString = {
+            {MessageType::Connected, "Connected"},
+            {MessageType::UserList, "UserList"},
+            {MessageType::UserPlayRequested, "UserPlayRequested"},
 
-        static std::string GetTypeString(const Message& message)
-        {
-            switch (message.type)
-            {
-            case MessageType::GameStart:
-                return "GameStart";
+            {MessageType::GameStart, "GameStart"},
+            {MessageType::Move, "Move"},
+            {MessageType::WaitMove, "WaitMove"},
+            {MessageType::GameEnd, "GameEnd"},
+            {MessageType::Error, "Error"},
 
-            case MessageType::Connected:
-                return "Connected";
+            {MessageType::RequestUserList, "RequestUserList"},
+            {MessageType::RequestConnectToPlayClient, "RequestConnectToPlayClient"},
+            {MessageType::RequestGameStart, "RequestGameStart"},
+            {MessageType::FailConnectedPlayClient, "FailConnectedPlayClient"},
+            {MessageType::RequestMove, "RequestMove"},
+            {MessageType::RequestGameEnd, "RequestGameEnd"},
+            {MessageType::Disconnected, "Disconnected"},
 
-            case MessageType::GameEnd:
-                return "GameEnd";
-
-            case MessageType::UserList:
-                return "UserList";
-
-            case MessageType::Move:
-                return "Move";
-
-            case MessageType::RequestMove:
-                return "RequestMove";
-
-            case MessageType::RequestGameEnd:
-                return "RequestGameEnd";
-
-            case MessageType::Disconnected:
-                return "Disconnected";
-
-            case MessageType::WaitMove:
-                return "WaitMove";
-
-            case MessageType::Error:
-                return "Error";
-            case MessageType::RequestMessage:
-                return "Message";
+            {MessageType::RequestMessage, "RequestMessage"},
+        };
+    public:
+        static std::string ToString(MessageType type) {
+            auto it = messageTypeToString.find(type);
+            if (it != messageTypeToString.end()) {
+                return it->second;
             }
             return "Unknown";
         }
 
+        static MessageType FromString(const std::string& str) {
+            for (const auto& pair : messageTypeToString) {
+                if (pair.second == str) {
+                    return pair.first;
+                }
+            }
+            return MessageType::Error;
+        }
+    };
+
+    struct Message
+    {
+        MessageType type;
+        std::string payload;
         void CoutMessage() const
         {
-            std::cout << "受信: " << GetTypeString(*this) << "**" << this->payload << '\n';
+            std::cout << "受信: " << MessageTypeUtil::ToString(this->type) << "**" << this->payload << '\n';
         }
     };
 } // winsoc
