@@ -2,9 +2,9 @@
 // Created by matuyuhi on 2023/12/20.
 //
 
-#include "../header/NetworkEntity.h"
+#include "../public/NetworkEntity.h"
 
-void NetworkEntity::InitializeWinsock()
+void winsoc::NetworkEntity::InitializeWinsock()
 {
     /// Winsockの初期化
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -28,7 +28,7 @@ void NetworkEntity::InitializeWinsock()
     portNum = input.first;
 }
 
-void NetworkEntity::CleanupWinsock()
+void winsoc::NetworkEntity::CleanupWinsock()
 {
     WSACleanup();
 }

@@ -8,22 +8,63 @@
 #include <iostream>
 #include <thread>
 #include <atomic>
+#include <list>
 #include <mutex>
 #include <sstream>
+#include <unordered_map>
 
-#include "../NetworkEntity.h"
+#include "NetworkEntity.h"
+#include "Sender.h"
 
 
-namespace server {
-    class ReversiServer : public NetworkEntity {
+namespace winsoc
+{
+    class ReversiServer : public NetworkEntity
+    {
     private:
-        std::map<int, SOCKET> clientSockets;
+        enum ClientState
+        {
+            Idle,
+            InRiversi,
+            None
+        };
+
+        using ClientInfo = struct ClientInfo
+        {
+            SOCKET socket = 0;
+            int id = -1;
+            ClientState state = None;
+        };
+
+        std::unordered_map<int, ClientInfo> clientSockets;
         std::atomic<int> nextClientId{1};
         std::mutex socketsMutex;
 
+        void AddClient(const ClientInfo& client)
+        {
+            clientSockets[client.id] = client;
+        }
+
+        // クライアントを削除する関数
+        void DeleteClient(int clientId)
+        {
+            // クライアントIDに基づいてエントリを削除
+            clientSockets.erase(clientId);
+        }
+
+        ClientInfo* GetClient(int clientId)
+        {
+            const auto it = clientSockets.find(clientId);
+            if (it != clientSockets.end() && it->second.id == clientId)
+            {
+                return &(it->second);
+            }
+            return nullptr;
+        }
 
     public:
-        void Start() {
+        void Start() override
+        {
             InitializeWinsock();
 
             SOCKET listenSocket = SetupListeningSocket();
@@ -38,47 +79,68 @@ namespace server {
                 }
 
                 int clientId = nextClientId++;
-                clientSockets[clientId] = clientSocket;
+                AddClient(ClientInfo{clientSocket, clientId, Idle});
 
                 std::cout << "new Client: " << clientId << '\n';
 
                 /// クライアントごとにスレッドを立てる
-                std::thread([this, clientId, clientSocket]()
+                std::thread([this, clientId]()
                 {
-                    this->HandleClient(clientId, clientSocket);
+                    this->HandleClient(clientId);
                 }).detach();
             }
         }
 
     private:
-        void HandleClient(int clientId, SOCKET clientSocket) {
-            char buffer[1024];
-            const std::string msg = "new Client Accept!!! ID is " + std::to_string(clientId);
-            send(clientSocket, msg.c_str(), static_cast<int>(msg.length()), 0);
+        void HandleClient(int clientId)
+        {
+            ClientInfo* client = GetClient(clientId);
+            char buffer[INPUT_BUFFER_SIZE];
+            Sender::SendConnected(client->socket, clientId);
             while (true)
             {
+                client = GetClient(clientId);
                 std::cout << "受信待ち" << '\n';
-                const int bytesReceived = recv(clientSocket, buffer, 1024, 0);
+                const int bytesReceived = recv(client->socket, buffer, INPUT_BUFFER_SIZE, 0);
                 if (bytesReceived == SOCKET_ERROR || bytesReceived == 0)
                 {
-                    closesocket(clientSocket);
-                    clientSockets.erase(clientId);
+                    std::cout << "エラーが発生しました。" << '\n';
+                    closesocket(client->socket);
+                    DeleteClient(clientId);
                     break;
                 }
 
                 std::string msgReceived(buffer, bytesReceived);
-                std::string response = "Client " + std::to_string(clientId) + ": " + msgReceived;
-                for (const std::pair<int, SOCKET> socket : clientSockets)
-                {
-                    send(socket.second, response.c_str(), static_cast<int>(response.length()), 0);
-                }
+                Message message = Sender::Deserialize(msgReceived);
+                message.CoutMessage();
 
-                std::cout << response << '\n';
+                switch (message.type)
+                {
+                case MessageType::RequestMessage:
+                    SendAllClient(clientId, message.payload);
+                    break;
+                default:
+                    break;
+                }
             }
             CloseClientConnection(clientId);
         }
 
-        SOCKET SetupListeningSocket() {
+        void SendAllClient(int ownerId, std::string message) const
+        {
+            for (const std::pair<const int, ClientInfo> clt : clientSockets)
+            {
+                if (clt.second.id == ownerId)
+                {
+                    continue;
+                }
+                Sender::SendMsg(clt.second.socket, "client" + std::to_string(ownerId) + ":" + message);
+            }
+        }
+
+
+        SOCKET SetupListeningSocket() const
+        {
             const SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
             if (listenSocket < 0)
             {
@@ -117,14 +179,14 @@ namespace server {
         void CloseClientConnection(int clientId)
         {
             std::lock_guard<std::mutex> lock(socketsMutex);
-            if (clientSockets.find(clientId) != clientSockets.end())
+            if (clientSockets.contains(clientId))
             {
-                closesocket(clientSockets[clientId]);
+                closesocket(clientSockets[clientId].socket);
                 clientSockets.erase(clientId);
                 std::cout << "クライアント " << clientId << " が切断されました。\n";
             }
         }
     };
-} // server
+} // winsoc
 
 #endif //REVERSISERVER_H

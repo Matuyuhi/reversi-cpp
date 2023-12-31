@@ -14,7 +14,8 @@
 #include "cout.h"
 
 /// リバーシのボードを管理するクラス
-class ReversiBoard {
+class ReversiBoard
+{
     /// ボードのサイズ
     int boardSize;
 
@@ -52,7 +53,6 @@ class ReversiBoard {
     /// @param color 置く石の色
     void updatePlaceableCell(int row, int col, stone color);
 
-
 protected:
     /// ボードの初期化処理
     /// 中心に石配置+そのほかの準備
@@ -74,10 +74,12 @@ public:
     /// @param size ボードのサイズ
     explicit ReversiBoard(int size);
 
-    ReversiBoard(const ReversiBoard&reversiBoard);
+    ReversiBoard(const ReversiBoard& reversiBoard);
 
-    ReversiBoard& operator=(const ReversiBoard&other) {
-        if (this != &other) {
+    ReversiBoard& operator=(const ReversiBoard& other)
+    {
+        if (this != &other)
+        {
             boardSize = other.boardSize;
             placeableCells = other.placeableCells;
             flippedCells = other.flippedCells;
@@ -161,8 +163,9 @@ public:
 
     /// ボードのコピーを返す
     /// @return ボードのコピー
-    ReversiBoard copy() const {
-        ReversiBoard copied = ReversiBoard(*this);
+    ReversiBoard copy() const
+    {
+        auto copied = ReversiBoard(*this);
         return copied;
     }
 };

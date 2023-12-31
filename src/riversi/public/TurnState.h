@@ -6,7 +6,8 @@
 #define TURNSTATE_H
 
 
-enum class TurnState {
+enum class TurnState
+{
     Defalut,
     Quit
 };

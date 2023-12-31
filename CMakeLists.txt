@@ -4,28 +4,10 @@ project(work)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(work src/main.cpp
-        header/Stone.h
-        src/ReversiBoard.cpp
-        header/ReversiBoard.h
-        header/List.h
-        header/cout.h
-        src/ReversiGame.cpp
-        header/ReversiGame.h
-        src/ReversiAI.cpp
-        header/ReversiAI.h
-        header/IPlayer.h
-        src/AIPlayer.cpp
-        header/AIPlayer.h
-        src/InputPlayer.cpp
-        header/InputPlayer.h
-        header/TurnState.h
-        src/Input.cpp
-        header/Input.h
-        src/server/ReversiServer.cpp
-        header/server/ReversiServer.h
-        src/server/NetworkEntity.cpp
-        header/server/NetworkEntity.h
-        src/server/ReversiClient.cpp
-        header/server/ReversiClient.h
+file(GLOB SOURCES "src/riversi/private/*.cpp" "src/winsoc/private/*.cpp")
+file(GLOB HEADER "src/riversi/public/*.h" "src/winsoc/public/*.h")
+add_executable(work
+        src/main.cpp
+        ${SOURCES}
+        ${HEADER}
 )

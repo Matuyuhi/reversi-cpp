@@ -11,14 +11,18 @@
 #include <functional>
 #include <unordered_set>
 
-struct PairHash {
+struct PairHash
+{
     /// パフォーマンス向上のため、hashの衝突を減らす
-    size_t operator()(const std::pair<int, int>& p) const {
+    size_t operator()(const std::pair<int, int>& p) const
+    {
         return std::hash<int>{}(p.first) ^ (std::hash<int>{}(p.second) << 1);
     }
 };
-template<typename T>
-class List {
+
+template <typename T>
+class List
+{
     std::list<T> placeableCells;
 
     /// 要素の追跡用
@@ -27,16 +31,20 @@ class List {
 public:
     List() = default;
     // pointをリストに追加
-    void add(const T& p) {
+    void add(const T& p)
+    {
         /// セットに要素がない場合のみ追加
-        if (cellSet.insert(p).second) {
+        if (cellSet.insert(p).second)
+        {
             placeableCells.push_back(p);
         }
     }
 
     // 指定したpointをリストから削除
-    bool remove(const T& p) {
-        if (cellSet.erase(p)) {
+    bool remove(const T& p)
+    {
+        if (cellSet.erase(p))
+        {
             // セットから要素を削除
             // std::list::removeは直接要素を削除
             placeableCells.remove(p);
@@ -46,38 +54,46 @@ public:
     }
 
     // リストからすべての要素を削除
-    void clear() {
+    void clear()
+    {
         placeableCells.clear();
         cellSet.clear();
     }
 
     // pointがリストに含まれているか確認
-    bool contains(const T& p) const {
-        return cellSet.find(p) != cellSet.end();
+    bool contains(const T& p) const
+    {
+        return cellSet.contains(p);
     }
 
     // デバッグ用にリストの内容を出力
-    void printList() const {
-        for (const auto& p: placeableCells) {
+    void printList() const
+    {
+        for (const auto& p : placeableCells)
+        {
             std::cout << "(" << p.first << ", " << p.second << ") ";
         }
         std::cout << std::endl;
     }
 
-    int size() const {
-        return placeableCells.size();
+    int size() const
+    {
+        return static_cast<int>(placeableCells.size());
     }
 
     // リストの結合（他のリストの要素を追加）
-    List& operator+=(const List& other) {
-        for (const auto& item : other.placeableCells) {
+    List& operator+=(const List& other)
+    {
+        for (const auto& item : other.placeableCells)
+        {
             add(item);
         }
         return *this;
     }
 
     // 単一の要素の追加
-    List& operator+=(const T& item) {
+    List& operator+=(const T& item)
+    {
         add(item);
         return *this;
     }

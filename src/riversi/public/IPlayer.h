@@ -10,7 +10,8 @@
 #include "TurnState.h"
 #include "Input.h"
 
-class IPlayer {
+class IPlayer
+{
 protected:
     ReversiBoard* reversiBoard;
     stone color;
@@ -22,7 +23,8 @@ public:
     /// @return ターン終了時のステート
     virtual TurnState make() = 0;
 
-    IPlayer(ReversiBoard* reversiBoard, const stone color) {
+    IPlayer(ReversiBoard* reversiBoard, const stone color)
+    {
         this->reversiBoard = reversiBoard;
         this->color = color;
     }

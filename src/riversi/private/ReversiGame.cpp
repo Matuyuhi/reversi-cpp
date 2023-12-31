@@ -2,22 +2,25 @@
 // Created by matuyuhi on 2023/11/08.
 //
 
-#include "../header/ReversiGame.h"
+#include "../public/ReversiGame.h"
 #include <format>
 
-ReversiGame::~ReversiGame() {
+ReversiGame::~ReversiGame()
+{
     delete players[stone::Black];
     delete players[stone::White];
 }
 
-ReversiGame::ReversiGame(): ReversiBoard(boardSize) {
+ReversiGame::ReversiGame(): ReversiBoard(boardSize)
+{
     /* プレイヤーの設定 */
     players[playerStone] = new InputPlayer(this, stone::Black);
     players[!playerStone] = new AIPlayer(this, stone::White);
     Clear();
 }
 
-void ReversiGame::Clear() {
+void ReversiGame::Clear()
+{
     Initialized();
     /* ゲーム開始時の4つの石を配置 */
     board[boardSize / 2 - 1][boardSize / 2 - 1] = stone::White;
@@ -31,18 +34,21 @@ void ReversiGame::Clear() {
 }
 
 
-ReversiGame::FinishedState ReversiGame::Start() {
+ReversiGame::FinishedState ReversiGame::Start()
+{
     srand(time(nullptr));
     // 現在のプレイヤーを黒に設定する
-    stone currentPlayer = stone::Black;
+    auto currentPlayer = stone::Black;
     printBoard(currentPlayer);
 
-    while (!finished()) {
+    while (!finished())
+    {
         spacer();
         spacer();
         std::cout << "//* " << (currentPlayer == playerStone ? "あなた" : "相手") << "のターン *//" << '\n';
         TurnState state = players[currentPlayer]->make();
-        if (state == TurnState::Quit) {
+        if (state == TurnState::Quit)
+        {
             std::cout << "ゲームを強制終了します" << '\n';
             break;
         }
@@ -56,14 +62,17 @@ ReversiGame::FinishedState ReversiGame::Start() {
     spacer();
     std::cout << "ゲームを終了しますか?" << '\n';
     std::cout << "q: 終了する r: もう一度" << '\n';
-    while (true) {
+    while (true)
+    {
         std::cout << "入力: ";
         std::string input;
         std::cin >> input;
-        if (input == "q") {
+        if (input == "q")
+        {
             return FinishedState::Quit;
         }
-        if (input == "r") {
+        if (input == "r")
+        {
             return FinishedState::Restart;
         }
         std::cout << "入力が不正です" << '\n';
@@ -71,31 +80,40 @@ ReversiGame::FinishedState ReversiGame::Start() {
     return FinishedState::Error;
 }
 
-void ReversiGame::gameFinished() {
+void ReversiGame::gameFinished()
+{
     spacer();
     // 結果を出力する
-    if (!getStoneCount(stone::Empty)) {
+    if (!getStoneCount(stone::Empty))
+    {
         // 空きマスがない場合(正常な終了)
-        if (getStoneCount(stone::Black) > getStoneCount(stone::White)) {
+        if (getStoneCount(stone::Black) > getStoneCount(stone::White))
+        {
             std::cout << "あなたの勝ちです" << '\n';
         }
-        else if (getStoneCount(stone::Black) < getStoneCount(stone::White)) {
+        else if (getStoneCount(stone::Black) < getStoneCount(stone::White))
+        {
             std::cout << "あなたの負けです" << '\n';
         }
-        else {
+        else
+        {
             std::cout << "引き分けです" << '\n';
         }
     }
-    else if (getPlaceableCells(stone::Black).size() == 0 || getPlaceableCells(stone::White).size() == 0) {
+    else if (getPlaceableCells(stone::Black).size() == 0 || getPlaceableCells(stone::White).size() == 0)
+    {
         // 空きマスがある場合(異常終了)
         std::cout << "おけるマスがないため、ゲームを終了します" << '\n';
-        if (getStoneCount(stone::Black) > getStoneCount(stone::White)) {
+        if (getStoneCount(stone::Black) > getStoneCount(stone::White))
+        {
             std::cout << "あなたの勝ちです" << '\n';
         }
-        else if (getStoneCount(stone::Black) < getStoneCount(stone::White)) {
+        else if (getStoneCount(stone::Black) < getStoneCount(stone::White))
+        {
             std::cout << "あなたの負けです" << '\n';
         }
-        else {
+        else
+        {
             std::cout << "引き分けです" << '\n';
         }
     }
@@ -105,4 +123,3 @@ void ReversiGame::gameFinished() {
     std::cout << std::format("{:<21} {}\n", "COMの石の数:", stonesCount[stone::White]);
     spacer();
 }
-

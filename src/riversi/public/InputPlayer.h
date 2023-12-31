@@ -10,18 +10,19 @@
 
 
 /// playerの手を入力するクラス
-class InputPlayer final : public IPlayer {
+class InputPlayer final : public IPlayer
+{
     /// 空いたマスが指定以下で手動に切り替える
     static constexpr int inAutoSwitchCount = 4;
 
     /// 自動入力モードかどうか
     bool isAuto = false;
 
-
 public:
     TurnState make() override;
 
-    InputPlayer(ReversiBoard* reversiBoard, const stone color): IPlayer(reversiBoard, color) {
+    InputPlayer(ReversiBoard* reversiBoard, const stone color): IPlayer(reversiBoard, color)
+    {
     }
 };
 

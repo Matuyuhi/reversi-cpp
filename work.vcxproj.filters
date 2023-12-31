@@ -1,99 +1,109 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="リソース ファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\server">
-      <UniqueIdentifier>{c86b22fa-696a-4897-ad31-673503d44895}</UniqueIdentifier>
+    <Filter Include="リソース ファイル\winsoc">
+      <UniqueIdentifier>{0a885862-4020-4714-8d32-adfc20d740ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\server">
-      <UniqueIdentifier>{8984cc51-0edc-49e5-94b4-bf70310c062e}</UniqueIdentifier>
+    <Filter Include="リソース ファイル\winsoc\private">
+      <UniqueIdentifier>{7a97969e-d58e-49ab-b751-0096b844990f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\winsoc\public">
+      <UniqueIdentifier>{026ac9a8-fa46-4913-9111-5eeea0b99ad8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\riversi">
+      <UniqueIdentifier>{74052df2-5d9f-4440-80b3-2e30794c7ab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\riversi\private">
+      <UniqueIdentifier>{c177047e-d7ac-443f-bff2-91622fb40ae8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\riversi\public">
+      <UniqueIdentifier>{3b1467f8-bf94-4e07-a8df-9174f5eaabd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\winsoc\private\NetworkEntity.cpp">
+      <Filter>リソース ファイル\winsoc\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\winsoc\private\ReversiClient.cpp">
+      <Filter>リソース ファイル\winsoc\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\winsoc\private\ReversiServer.cpp">
+      <Filter>リソース ファイル\winsoc\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\winsoc\private\Sender.cpp">
+      <Filter>リソース ファイル\winsoc\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\riversi\private\AIPlayer.cpp">
+      <Filter>リソース ファイル\riversi\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\riversi\private\Input.cpp">
+      <Filter>リソース ファイル\riversi\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\riversi\private\InputPlayer.cpp">
+      <Filter>リソース ファイル\riversi\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\riversi\private\ReversiAI.cpp">
+      <Filter>リソース ファイル\riversi\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\riversi\private\ReversiBoard.cpp">
+      <Filter>リソース ファイル\riversi\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\riversi\private\ReversiGame.cpp">
+      <Filter>リソース ファイル\riversi\private</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ReversiBoard.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ReversiGame.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AIPlayer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\InputPlayer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ReversiAI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\server\NetworkEntity.cpp">
-      <Filter>ソース ファイル\server</Filter>
-    </ClCompile>
-    <ClCompile Include="src\server\ReversiClient.cpp">
-      <Filter>ソース ファイル\server</Filter>
-    </ClCompile>
-    <ClCompile Include="src\server\ReversiServer.cpp">
-      <Filter>ソース ファイル\server</Filter>
+      <Filter>リソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\cout.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\winsoc\public\NetworkEntity.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\List.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\winsoc\public\ReversiClient.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\ReversiBoard.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\winsoc\public\ReversiServer.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\Stone.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\winsoc\public\Sender.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\ReversiGame.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\AIPlayer.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\AIPlayer.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\cout.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\InputPlayer.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\Input.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\IPlayer.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\InputPlayer.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\ReversiAI.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\IPlayer.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\TurnState.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\List.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\Input.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="src\riversi\public\ReversiAI.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\server\NetworkEntity.h">
-      <Filter>ヘッダー ファイル\server</Filter>
+    <ClInclude Include="src\riversi\public\ReversiBoard.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\server\ReversiClient.h">
-      <Filter>ヘッダー ファイル\server</Filter>
+    <ClInclude Include="src\riversi\public\ReversiGame.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="header\server\ReversiServer.h">
-      <Filter>ヘッダー ファイル\server</Filter>
+    <ClInclude Include="src\riversi\public\Stone.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\riversi\public\TurnState.h">
+      <Filter>リソース ファイル\riversi\public</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

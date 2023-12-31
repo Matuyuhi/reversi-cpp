@@ -7,17 +7,18 @@
 
 
 #include "ReversiBoard.h"
-#include "../header/AIPlayer.h"
-#include "../header/InputPlayer.h"
+#include "AIPlayer.h"
+#include "InputPlayer.h"
 #include <iostream>
 
 /// リバーシのプレイを管理するクラス
-class ReversiGame : ReversiBoard {
+class ReversiGame : ReversiBoard
+{
 private:
     static constexpr stone playerStone = stone::Black;
     static constexpr int boardSize = 8;
 
-    std::map<stone, IPlayer *> players;
+    std::map<stone, IPlayer*> players;
 
 
     /// 終了時の画面表示
@@ -25,10 +26,10 @@ private:
 
     static void spacer() { std::cout << "//----------------//" << '\n'; }
 
-
 public:
     /// 終了時のステータス
-    enum class FinishedState {
+    enum class FinishedState
+    {
         /// もう一度遊ぶ
         Restart,
         /// 終了する
