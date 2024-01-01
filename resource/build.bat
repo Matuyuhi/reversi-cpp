@@ -1,3 +1,3 @@
 @echo off
-msbuild .\WORK.vcxproj /p:Configuration=Debug /p:Platform=x64
+msbuild ..\work.vcxproj /p:Configuration=Debug /p:Platform=x64
 pause

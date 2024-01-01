@@ -1,3 +1,3 @@
 @echo off
-.\x64\Debug\work.exe
+..\x64\Debug\work.exe
 pause

@@ -39,7 +39,7 @@ void ReversiBoard::Initialized()
     moveHistory.clear();
 }
 
-bool ReversiBoard::placeStone(int row, int col, const stone color, bool isUpdate)
+bool ReversiBoard::placeStone(int row, int col, const stone color)
 {
     if (row < 0 || row >= boardSize || col < 0 || col >= boardSize || board[row][col] != stone::Empty)
     {

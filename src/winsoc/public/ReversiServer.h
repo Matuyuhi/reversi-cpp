@@ -17,7 +17,7 @@
 #include "NetworkEntity.h"
 #include "Sender.h"
 
-#include "../../riversi/public/ReversiBoard.h"
+#include "ReversiSessionManager.h"
 
 
 namespace winsoc
@@ -74,7 +74,7 @@ namespace winsoc
             int clientA = -1;
             int clientB = -1;
             int sessionId = -1;
-            ReversiBoard board;
+            ReversiSessionManager board;
         };
 
         std::unordered_map<int, ClientInfo> clientSockets = std::unordered_map<int, ClientInfo>();
@@ -236,8 +236,9 @@ namespace winsoc
                 a,
                 b,
                 sessionId,
-                ReversiBoard()
+                ReversiSessionManager()
             };
+            session.board.Initialized();
             AddSession(session);
         }
         SOCKET SetupListeningSocket() const

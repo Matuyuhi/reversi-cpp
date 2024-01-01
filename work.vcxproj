@@ -42,6 +42,7 @@
         <ClCompile Include="src\winsoc\private\NetworkEntity.cpp"/>
         <ClCompile Include="src\winsoc\private\ReversiClient.cpp"/>
         <ClCompile Include="src\winsoc\private\ReversiServer.cpp"/>
+        <ClCompile Include="src\winsoc\private\ReversiSessionManager.cpp" />
         <ClCompile Include="src\winsoc\private\Sender.cpp"/>
     </ItemGroup>
     <ItemGroup>
@@ -61,6 +62,7 @@
         <ClInclude Include="src\winsoc\public\NetworkEntity.h"/>
         <ClInclude Include="src\winsoc\public\ReversiClient.h"/>
         <ClInclude Include="src\winsoc\public\ReversiServer.h"/>
+        <ClInclude Include="src\winsoc\public\ReversiSessionManager.h" />
         <ClInclude Include="src\winsoc\public\Sender.h"/>
     </ItemGroup>
     <PropertyGroup Label="Globals">

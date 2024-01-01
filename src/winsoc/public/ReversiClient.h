@@ -9,6 +9,7 @@
 
 #include "MessageHandler.h"
 #include "Sender.h"
+#include "ReversiSessionManager.h"
 
 namespace winsoc
 {
@@ -51,6 +52,7 @@ namespace winsoc
         int userId = -1;
         int otherId = -1;
         std::vector<int> currentUserList;
+        ReversiSessionManager reversiBoard = ReversiSessionManager();
 
         void InputHandler(std::pair<int, std::string> input)
         {
@@ -194,6 +196,7 @@ namespace winsoc
                 // play
                 std::cout << requestId << "からの対戦リクエストが承諾されました。\nゲームを始めます。\n";
                 state = ClientState::InReversi;
+                reversiBoard.Initialized();
                 return;
             }
         }
