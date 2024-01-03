@@ -62,6 +62,11 @@ namespace winsoc
                 this->sessionId = sessionId;
                 board = ReversiSessionManager();
             }
+            
+            ~_SessionInfo()
+            {
+                delete[] clients;
+            }
 
             void Initialized()
             {
@@ -366,6 +371,18 @@ namespace winsoc
             }
         }
     public:
+        ~ReversiServer() override
+        {
+            for (auto client : clientSockets)
+            {
+                closesocket(client.second->socket);
+                delete client.second;
+            }
+            WSACleanup();
+            for (auto session : sessions) {
+                delete session.second;
+            } 
+        }
         void Start() override
         {
             InitializeWinsock();

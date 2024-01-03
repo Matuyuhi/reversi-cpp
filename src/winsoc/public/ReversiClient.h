@@ -17,6 +17,7 @@ namespace winsoc
     class ReversiClient : public NetworkEntity
     {
     public:
+        ~ReversiClient() override = default;
         void Start() override
         {
             InitializeWinsock();
