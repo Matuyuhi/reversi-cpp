@@ -10,6 +10,7 @@
 #include "MessageHandler.h"
 #include "Sender.h"
 #include "ReversiSessionManager.h"
+#include "Strings.h"
 
 namespace winsoc
 {
@@ -43,6 +44,8 @@ namespace winsoc
         enum class ClientState
         {
             InReversi,
+            WaitMoveRequest,
+            WaitMoveResponse,
             Idle,
             RequestedPlay,
         };
@@ -54,19 +57,30 @@ namespace winsoc
         std::vector<int> currentUserList;
         ReversiSessionManager reversiBoard = ReversiSessionManager();
 
+        // 0~7
+        int inputCol = -1;
+        // 0~7
+        int inputRow = -1;
+
+        bool IsInRiversi()
+        {
+            return
+                state == ClientState::InReversi ||
+                state == ClientState::WaitMoveRequest ||
+                state == ClientState::WaitMoveResponse;
+        }
+
         void InputHandler(std::pair<int, std::string> input)
         {
-            switch (state)
+            if (state == ClientState::Idle)
             {
-            case ClientState::Idle:
                 IdleInputHandler(input);
-                break;
-            case ClientState::InReversi:
+            }else if (IsInRiversi())
+            {
                 InReversiInputHandler(input);
-                break;
-            case ClientState::RequestedPlay:
+            } else if (state == ClientState::RequestedPlay) {
                 RequestPlayInputHandler(input);
-                break;
+       
             }
         }
 
@@ -126,15 +140,50 @@ namespace winsoc
                 return;
             }
             // std::cout << "入力が不正です" << '\n';
-            Sender::SendMsg(connectSocket, input.second);            
+            Sender::SendMsg(connectSocket, input.second);
         }
 
         void InReversiInputHandler(std::pair<int, std::string> input)
         {
-            if (input.first == 1)
+            if (state == ClientState::WaitMoveRequest)
             {
-               
+                if (input.first == INPUT_ERROR_NUMBER)
+                {
+                    std::cout << "入力が不正です" << '\n';
+                    return;
+                }
+
+                if (inputCol == -1)
+                {
+                    inputCol = input.first - 1;
+                    std::cout << "横(1~8):";
+                } else if (inputRow == -1)
+                {
+                    inputRow = input.first - 1;
+                    SendMoveRequest();
+                } else
+                {
+                    // 例外
+                    std::cout << "error: 001" << '\n';
+                }
+            } else if (state == ClientState::WaitMoveResponse)
+            {
+                std::cout << Strings::WaitServer << '\n';
+            } else
+            {
+                Sender::SendMsg(connectSocket, input.second);
             }
+        }
+
+        void SendMoveRequest()
+        {
+            if (inputCol == -1 || inputRow == -1)
+            {
+                std::cout << Strings::ErrorClientMoveRequest << '\n';
+                return;
+            }
+            Sender::SendRequestMove(connectSocket, inputCol, inputRow);
+            state = ClientState::WaitMoveResponse;
         }
 
         void ReceiveMessages()
@@ -151,12 +200,15 @@ namespace winsoc
                 }
                 buffer[bytesReceived] = '\0';
                 const Message message = Sender::Deserialize(buffer);
+                // message.CoutMessage();
                 switch (message.type)
                 {
                 case MessageType::RequestMessage:
-                    message.CoutMessage();
+                    // todo
+                    std::cout << message.payload << "\n";
                     break;
                 case MessageType::Connected:
+                    // todo
                     std::cout << "接続成功\n";
                     MessageHandler::GetSingleIntValue(message, userId);
                     std::cout << "あなたのIDは" << userId << "です。\n";
@@ -171,10 +223,55 @@ namespace winsoc
                 case MessageType::FailConnectedPlayClient:
                 case MessageType::GameStart:
                     GetPlayUserResponse(message);
+                    break;
+                case MessageType::ResponseMove:
+                    GetMoveResponse(message);
+                    break;
+                case MessageType::PlaceStone:
+                    UpdateStone(message);
+                    break;
+                case MessageType::WaitMove:
+                    RequireMoveInput();
+                    break;
                 default:
                     break;
                 }
             }
+        }
+
+        void UpdateStone(Message message)
+        {
+            std::vector<int> response = MessageHandler::GetPlaceStone(message);
+            if (response.size() != 3)
+            {
+                std::cout << "error: 002" << '\n';
+                return;
+            }
+            reversiBoard.SetStone(response[1], response[2], static_cast<stone>(response[0]));
+            reversiBoard.PrintBoard();
+        }
+
+        void GetMoveResponse(Message message)
+        {
+            std::cout << message.payload << '\n';
+            if (message.result == Result::Success)
+            {
+                state = ClientState::InReversi;
+            }
+            else if (message.result == Result::Error)
+            {
+                //もういちどにゅうりょく
+                RequireMoveInput();
+            }
+        }
+
+        void RequireMoveInput()
+        {
+            std::cout << Strings::YourTurn << '\n';
+            state = ClientState::WaitMoveRequest;
+            inputCol = -1;
+            inputRow = -1;
+            std::cout << "縦(1~8):";
         }
 
         void GetPlayUserResponse(Message message)
@@ -188,17 +285,15 @@ namespace winsoc
             if (message.type == MessageType::FailConnectedPlayClient)
             {
                 // fail
-                std::cout << requestId << "からの対戦リクエストが拒否されました。\n";
+                std::cout << "始められませんでした。もう一度遊ぶ相手を選んでください。\n";
                 state = ClientState::Idle;
                 return;
-            } else
-            {
-                // play
-                std::cout << requestId << "からの対戦リクエストが承諾されました。\nゲームを始めます。\n";
-                state = ClientState::InReversi;
-                reversiBoard.Initialized();
-                return;
             }
+            // play
+            std::cout << requestId << "からの対戦リクエストが承諾されました。\nゲームを始めます。\n";
+            state = ClientState::InReversi;
+            reversiBoard.Initialized();
+            reversiBoard.PrintBoard();
         }
 
         void GetRequestUserPlay(Message message)

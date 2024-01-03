@@ -10,8 +10,10 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
+#include <thread>
 #include <vector>
 #include "Message.h"
+#include "../../riversi/public/Stone.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -30,10 +32,10 @@ namespace winsoc
             Send(socket, Message{MessageType::RequestMessage, message});
         }
 
-        static void SendMove(const SOCKET& socket, int user, int x, int y)
+        static void SendPlaceStone(const SOCKET& socket, int stoneId, int row, int col)
         {
-            std::string payload = SerializeIntArray({user, x, y});
-            Send(socket, Message{MessageType::Move, payload});
+            std::string payload = SerializeIntArray({stoneId, row, col});
+            Send(socket, Message{MessageType::PlaceStone, payload});
         }
 
         static void SendUserList(const SOCKET& socket, const std::vector<int>& array)
@@ -45,9 +47,10 @@ namespace winsoc
         /// <summary>
         /// 参加するclientに開始を宣言する
         /// </summary>
-        static void SendGameStart(const SOCKET& socket, int id)
+        static void SendGameStart(const SOCKET& socket, stone stone)
         {
-            Send(socket, Message{MessageType::GameStart, std::to_string(id)});
+            int stoneId = static_cast<int>(stone);
+            Send(socket, Message{MessageType::GameStart, std::to_string(stoneId)});
         }
 
         static void SendWaitMove(const SOCKET& socket)
@@ -66,11 +69,17 @@ namespace winsoc
             Send(socket, Message{MessageType::Error, message});
         }
 
-        static void SendRequestMove(const SOCKET& socket, int x, int y)
+        static void SendRequestMove(const SOCKET& socket, int col, int row)
         {
-            std::string payload = SerializeCoordinates(x, y);
+            std::string payload = SerializeIntArray({col, row});
             Send(socket, Message{MessageType::RequestMove, payload});
         }
+
+        static void ResponseMove(const SOCKET& socket, const std::string& res, Result result)
+        {
+            Send(socket, Message{MessageType::ResponseMove, res, result});
+        }
+        
         static void SendRequestUserList(const SOCKET& socket)
         {
             Send(socket, Message{MessageType::RequestUserList, ""});
@@ -115,29 +124,25 @@ namespace winsoc
             std::getline(ss, typeStr, '|');
             MessageType type = MessageTypeUtil::FromString(typeStr);
             std::string payload;
-            std::getline(ss, payload);
-            return Message{type, payload};
+            std::getline(ss, payload, '|');
+            std::string res;
+            std::getline(ss, res);
+            return Message(type, payload, std::stoi(res));
         }
 
     private:
         static void Send(const SOCKET& socket, const Message& message)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(300)); 
             std::string serialized = Serialize(message);
+            // std::cout << "送信: " << serialized << '\n';
             send(socket, serialized.c_str(), static_cast<int>(serialized.length()), 0);
         }
 
         static std::string Serialize(const Message& message)
         {
             std::stringstream ss;
-            ss << MessageTypeUtil::ToString(message.type) << "|" << message.payload;
-            return ss.str();
-        }
-
-
-        static std::string SerializeCoordinates(int x, int y)
-        {
-            std::stringstream ss;
-            ss << x << "," << y;
+            ss << MessageTypeUtil::ToString(message.type) << "|" << message.payload << "|" << static_cast<int>(message.result);
             return ss.str();
         }
 

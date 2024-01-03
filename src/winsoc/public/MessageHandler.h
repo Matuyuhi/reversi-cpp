@@ -55,6 +55,49 @@ namespace winsoc
             }
         }
 
+        static std::pair<int, int> GetMoveInfo(const Message& message)
+        {
+            try
+            {
+                const std::any payload = DeserializePayload(message);
+                if (payload.type() == typeid(std::vector<int>)) {
+                    auto list = std::any_cast<std::vector<int>>(payload);
+                    if (list.size() == 2) {
+                        return {list[0], list[1]};
+                    }
+                    throw std::bad_any_cast();
+                }
+
+                throw std::bad_any_cast();
+            }
+            catch (const std::bad_any_cast& e)
+            {
+                std::cerr << e.what() << '\n';
+                return {-1, -1};
+            }
+        }
+        static std::vector<int> GetPlaceStone(const Message& message)
+        {
+            try
+            {
+                const std::any payload = DeserializePayload(message);
+                if (payload.type() == typeid(std::vector<int>)) {
+                    auto list = std::any_cast<std::vector<int>>(payload);
+                    if (list.size() == 3) {
+                        return {list[0], list[1], list[2]};
+                    }
+                    throw std::bad_any_cast();
+                }
+
+                throw std::bad_any_cast();
+            }
+            catch (const std::bad_any_cast& e)
+            {
+                std::cerr << e.what() << '\n';
+                return {-1, -1, -1};
+            }
+        }
+
     private:
         static PayloadType GetPayloadType(const Message& message)
         {
@@ -70,11 +113,9 @@ namespace winsoc
            
             case MessageType::GameEnd:
             case MessageType::UserList:
-            case MessageType::Move:
-                return PayloadType::IntArray;
-
             case MessageType::RequestMove:
-                return PayloadType::Coordinates;
+            case MessageType::PlaceStone:
+                return PayloadType::IntArray;
 
             case MessageType::RequestGameEnd:
             case MessageType::Disconnected:
@@ -82,6 +123,7 @@ namespace winsoc
             case MessageType::Error:
             case MessageType::RequestMessage:
             case MessageType::RequestUserList:
+            case MessageType::ResponseMove:
                 return PayloadType::String;
             }
             std::cout << "Unknown PayloadType\n";
@@ -96,21 +138,10 @@ namespace winsoc
                 return std::stoi(message.payload);
             case PayloadType::IntArray:
                 return DeserializeIntArray(message.payload);
-            case PayloadType::Coordinates:
-                return DeserializeCoordinates(message.payload);
             case PayloadType::String:
                 return message.payload;
             }
             return "";
-        }
-
-        static std::pair<int, int> DeserializeCoordinates(const std::string& payload)
-        {
-            std::stringstream ss(payload);
-            int x, y;
-            char delimiter;
-            ss >> x >> delimiter >> y;
-            return std::make_pair(x, y);
         }
 
         static std::vector<int> DeserializeIntArray(const std::string& payload)

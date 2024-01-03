@@ -8,6 +8,13 @@
 
 namespace winsoc
 {
+    enum class Result
+    {
+        Success = 0,
+        Error = 1,
+        None = 2
+    };
+    
     enum class MessageType
     {
         // server
@@ -16,7 +23,8 @@ namespace winsoc
         UserPlayRequested,
 
         GameStart,
-        Move,
+        ResponseMove,
+        PlaceStone,
         WaitMove,
         GameEnd,
         Error,
@@ -36,7 +44,6 @@ namespace winsoc
     {
         Int,
         IntArray,
-        Coordinates,
         String,
     };
 
@@ -48,7 +55,8 @@ namespace winsoc
             {MessageType::UserPlayRequested, "UserPlayRequested"},
 
             {MessageType::GameStart, "GameStart"},
-            {MessageType::Move, "Move"},
+            {MessageType::ResponseMove, "Move"},
+            {MessageType::PlaceStone, "PlaceStone"},
             {MessageType::WaitMove, "WaitMove"},
             {MessageType::GameEnd, "GameEnd"},
             {MessageType::Error, "Error"},
@@ -86,6 +94,24 @@ namespace winsoc
     {
         MessageType type;
         std::string payload;
+        Result result = Result::None;
+        Message(MessageType type, std::string payload)
+        {
+            this->type = type;
+            this->payload = payload;
+        }
+        Message(MessageType type, std::string payload, Result result)
+        {
+            this->type = type;
+            this->payload = payload;
+            this->result = result;
+        }
+        Message(MessageType type, std::string payload, int resultCode)
+        {
+            this->type = type;
+            this->payload = payload;
+            this->result = static_cast<Result>(resultCode);
+        }
         void CoutMessage() const
         {
             std::cout << "受信: " << MessageTypeUtil::ToString(this->type) << "**" << this->payload << '\n';

@@ -37,6 +37,11 @@ namespace winsoc {
         void PrintBoard() {
            printBoard(stone::Empty);
         }
+
+        bool IsCanPlaceStone(int row, int col, const stone color) const
+        {
+            return isCanPlace(row, col, color);
+        }
     };
 
 } // winsoc

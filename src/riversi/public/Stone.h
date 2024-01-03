@@ -26,20 +26,6 @@ inline stone operator!(const stone s)
     }
 }
 
-inline std::ostream& operator<<(std::ostream& os, const stone s)
-{
-    switch (s)
-    {
-    case stone::Black: os << "Black";
-        break;
-    case stone::White: os << "Wihte";
-        break;
-    default: os << "Empty";
-        break;
-    }
-    return os;
-}
-
 inline std::string printStone(const stone s)
 {
     switch (s)
@@ -48,6 +34,24 @@ inline std::string printStone(const stone s)
     case stone::White: return "W ";
     default: return " ";
     }
+}
+
+inline static std::string NamedStone(const stone s)
+{
+    switch (s)
+    {
+    case stone::Black:
+        return "Black";
+    case stone::White:
+        return "White";
+    default:
+        return "Empty";
+    }
+}
+
+inline std::ostream& operator<<(std::ostream& os, const stone s)
+{
+    return os << NamedStone(s);
 }
 
 #endif //WORK01_STONE_H

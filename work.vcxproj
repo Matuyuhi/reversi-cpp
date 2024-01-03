@@ -64,6 +64,7 @@
         <ClInclude Include="src\winsoc\public\ReversiServer.h"/>
         <ClInclude Include="src\winsoc\public\ReversiSessionManager.h" />
         <ClInclude Include="src\winsoc\public\Sender.h"/>
+        <ClInclude Include="src\winsoc\public\Strings.h" />
     </ItemGroup>
     <PropertyGroup Label="Globals">
         <VCProjectVersion>17.0</VCProjectVersion>
