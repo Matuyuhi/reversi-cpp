@@ -6,17 +6,21 @@
 #define WORK_REVERSISESSIONMANAGER_H
 #include "../../reversi/public/ReversiBoard.h"
 
-namespace winsoc {
-
-    class ReversiSessionManager: ReversiBoard {
+namespace winsoc
+{
+    class ReversiSessionManager : ReversiBoard
+    {
     private:
         static constexpr int boardSize = 8;
-    public:
-        ReversiSessionManager(): ReversiBoard(boardSize) {
 
+    public:
+        ReversiSessionManager(): ReversiBoard(boardSize)
+        {
             Initialized();
         }
-        void Initialized() {
+
+        void Initialized()
+        {
             ReversiBoard::Initialized();
 
             /* ゲーム開始時の4つの石を配置 */
@@ -30,25 +34,26 @@ namespace winsoc {
             updatePlaceableCellsInList(stone::Black);
         }
 
-        void SetStone(int row, int col, const stone color) {
+        void SetStone(int row, int col, const stone color)
+        {
             placeStone(row, col, color);
         }
 
-        void PrintBoard() {
-           printBoard(stone::Empty);
+        void PrintBoard()
+        {
+            printBoard(stone::Empty);
         }
 
         bool IsCanPlaceStone(int row, int col, const stone color) const
         {
             return isCanPlace(row, col, color);
         }
-        
+
         bool finished()
         {
             return ReversiBoard::finished();
         }
     };
-
 } // winsoc
 
 #endif //WORK_REVERSISESSIONMANAGER_H

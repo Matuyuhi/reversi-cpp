@@ -31,6 +31,7 @@ namespace winsoc
         {
             Send(socket, Message{MessageType::RequestMessage, message});
         }
+
         static void SendInReversiMsg(const SOCKET& socket, const std::string& message)
         {
             Send(socket, Message{MessageType::RequestInReversiMsg, message});
@@ -82,12 +83,12 @@ namespace winsoc
         {
             Send(socket, Message{MessageType::ResponseMove, res, result});
         }
-        
+
         static void SendRequestUserList(const SOCKET& socket)
         {
             Send(socket, Message{MessageType::RequestUserList, ""});
         }
-        
+
         /// <summary>
         /// サーバーを介してクライアントに接続要求を送信します。
         /// </summary>
@@ -136,7 +137,7 @@ namespace winsoc
     private:
         static void Send(const SOCKET& socket, const Message& message)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(300)); 
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
             std::string serialized = Serialize(message);
             // std::cout << "送信: " << serialized << '\n';
             send(socket, serialized.c_str(), static_cast<int>(serialized.length()), 0);
@@ -145,7 +146,8 @@ namespace winsoc
         static std::string Serialize(const Message& message)
         {
             std::stringstream ss;
-            ss << MessageTypeUtil::ToString(message.type) << "|" << message.payload << "|" << static_cast<int>(message.result);
+            ss << MessageTypeUtil::ToString(message.type) << "|" << message.payload << "|" << static_cast<int>(message.
+                result);
             return ss.str();
         }
 

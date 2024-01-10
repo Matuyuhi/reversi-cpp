@@ -56,6 +56,7 @@ namespace winsoc
                 sessionId = -1;
                 board = ReversiSessionManager();
             }
+
             _SessionInfo(ClientInfo* clientA, ClientInfo* clientB, int sessionId)
             {
                 clients[0] = clientA;
@@ -63,7 +64,7 @@ namespace winsoc
                 this->sessionId = sessionId;
                 board = ReversiSessionManager();
             }
-            
+
             ~_SessionInfo()
             {
                 // delete[] clients;
@@ -90,13 +91,16 @@ namespace winsoc
                 }
                 if (!board.IsCanPlaceStone(row, col, stone))
                 {
-                    Sender::ResponseMove(client->socket, Strings::PlaceStoneResult(col, row, true, Result::Error), Result::Error);
+                    Sender::ResponseMove(client->socket, Strings::PlaceStoneResult(col, row, true, Result::Error),
+                                         Result::Error);
                     return;
                 }
                 board.SetStone(row, col, stone);
-                Sender::ResponseMove(client->socket, Strings::PlaceStoneResult(col, row, true, Result::Success), Result::Success);
+                Sender::ResponseMove(client->socket, Strings::PlaceStoneResult(col, row, true, Result::Success),
+                                     Result::Success);
                 Sender::SendPlaceStone(client->socket, static_cast<int>(stone), row, col);
-                Sender::ResponseMove(other->socket, Strings::PlaceStoneResult(col, row, false, Result::Success), Result::Success);
+                Sender::ResponseMove(other->socket, Strings::PlaceStoneResult(col, row, false, Result::Success),
+                                     Result::Success);
                 Sender::SendPlaceStone(other->socket, static_cast<int>(stone), row, col);
                 SendToggleTurn();
             }
@@ -105,15 +109,17 @@ namespace winsoc
             {
                 return clients[0]->id == clientId || clients[1]->id == clientId;
             }
-            
+
             static stone ClientStone(int num)
             {
                 return num == 0 ? stone::Black : stone::White;
             }
-            inline bool operator==(const _SessionInfo& other) const
+
+            bool operator==(const _SessionInfo& other) const
             {
                 return sessionId == other.sessionId;
             }
+
         private:
             void SendToggleTurn()
             {
@@ -127,10 +133,9 @@ namespace winsoc
                 currentTurn = currentTurn == 0 ? 1 : 0;
                 Sender::SendWaitMove(clients[currentTurn]->socket);
             }
-            
+
             void SendFinished()
             {
-                
             }
         };
 
@@ -165,7 +170,7 @@ namespace winsoc
             }
             return nullptr;
         }
-        
+
         void HandleClient(int clientId)
         {
             ClientInfo* client = GetClient(clientId);
@@ -193,7 +198,7 @@ namespace winsoc
                     SendAllClient(clientId, message.payload);
                     break;
                 case MessageType::RequestInReversiMsg:
-                    
+
                 case MessageType::RequestUserList:
                     SendUserList(clientId);
                     break;
@@ -290,16 +295,15 @@ namespace winsoc
             if (clientSockets.contains(requestId))
             {
                 ClientInfo* requestClient = clientSockets.at(requestId);
-                if (requestClient->state != ClientState::Idle)
+                if (requestClient->state != Idle)
                 {
                     Sender::SendMsg(clientSockets.at(requestId)->socket, Strings::FailUserConnect(requestId));
                     return;
                 }
                 Sender::SendUserPlayRequested(requestClient->socket, clientId);
-                return;
             }
         }
-    
+
         void UserPlayConnectResponse(int clientId, Message& message)
         {
             int requestId = -1;
@@ -322,7 +326,6 @@ namespace winsoc
                     Sender::SendMsg(requestClient->socket, Strings::FailStartGame(clientId));
                     Sender::FailConnectedPlayClient(requestClient->socket, clientId);
                 }
-                return;
             }
         }
 
@@ -331,14 +334,14 @@ namespace winsoc
         {
             ClientInfo* clientA = clientSockets.at(a);
             ClientInfo* clientB = clientSockets.at(b);
-            
+
             Sender::SendGameStart(clientA->socket, SessionInfo::ClientStone(0));
             Sender::SendMsg(clientA->socket, Strings::CallClientStone(SessionInfo::ClientStone(0)));
-            
+
             Sender::SendGameStart(clientB->socket, SessionInfo::ClientStone(1));
             Sender::SendMsg(clientB->socket, Strings::CallClientStone(SessionInfo::ClientStone(1)));
             const int sessionId = static_cast<int>(sessions.size()) + 1;
-            SessionInfo* session = new SessionInfo{
+            auto session = new SessionInfo{
                 clientA,
                 clientB,
                 sessionId
@@ -350,7 +353,6 @@ namespace winsoc
         void SendUpdatedTurn(int sessionId)
         {
             SessionInfo* session = sessions.at(sessionId);
-            
         }
 
         SOCKET SetupListeningSocket() const
@@ -396,10 +398,11 @@ namespace winsoc
             if (clientSockets.contains(clientId))
             {
                 closesocket(clientSockets[clientId]->socket);
-                clientSockets[clientId]->state = ClientState::Disconnect;
+                clientSockets[clientId]->state = Disconnect;
                 std::cout << "クライアント " << clientId << " が切断されました。\n";
             }
         }
+
     public:
         ~ReversiServer() override
         {
@@ -409,10 +412,12 @@ namespace winsoc
                 delete client.second;
             }
             WSACleanup();
-            for (auto session : sessions) {
+            for (auto session : sessions)
+            {
                 delete session.second;
-            } 
+            }
         }
+
         void Start() override
         {
             InitializeWinsock();
@@ -429,7 +434,7 @@ namespace winsoc
                 }
 
                 int clientId = nextClientId++;
-                ClientInfo* client = new ClientInfo{clientSocket, clientId, Idle};
+                auto client = new ClientInfo{clientSocket, clientId, Idle};
                 AddClient(client);
 
                 std::cout << "新しいClientが追加されました: " << clientId << '\n';

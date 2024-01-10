@@ -18,19 +18,19 @@ namespace winsoc
     {
     public:
         ~ReversiClient() override = default;
+
         void Start() override
         {
             InitializeWinsock();
-            
+
             std::cin.clear();
             std::cin.ignore(INPUT_BUFFER_SIZE, '\n');
-            
+
             connectSocket = SetupConnection("127.0.0.1");
 
             std::thread receiveThread(&ReversiClient::ReceiveMessages, this);
             while (running)
             {
-
                 std::pair<int, std::string> input = Input::getInputNumbers();
 
                 InputHandler(input);
@@ -50,6 +50,7 @@ namespace winsoc
             Idle,
             RequestedPlay,
         };
+
         SOCKET connectSocket = 0;
         ClientState state = ClientState::Idle;
         std::atomic<bool> running{true};
@@ -76,12 +77,14 @@ namespace winsoc
             if (state == ClientState::Idle)
             {
                 IdleInputHandler(input);
-            }else if (IsInReversi())
+            }
+            else if (IsInReversi())
             {
                 InReversiInputHandler(input);
-            } else if (state == ClientState::RequestedPlay) {
+            }
+            else if (state == ClientState::RequestedPlay)
+            {
                 RequestPlayInputHandler(input);
-       
             }
         }
 
@@ -158,19 +161,23 @@ namespace winsoc
                 {
                     inputCol = input.first - 1;
                     std::cout << "横(1~8):";
-                } else if (inputRow == -1)
+                }
+                else if (inputRow == -1)
                 {
                     inputRow = input.first - 1;
                     SendMoveRequest();
-                } else
+                }
+                else
                 {
                     // 例外
                     std::cout << "error: 001" << '\n';
                 }
-            } else if (state == ClientState::WaitMoveResponse)
+            }
+            else if (state == ClientState::WaitMoveResponse)
             {
                 std::cout << Strings::WaitServer << '\n';
-            } else
+            }
+            else
             {
                 Sender::SendInReversiMsg(connectSocket, input.second);
             }

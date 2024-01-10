@@ -9,9 +9,10 @@
 #include "Message.h"
 #include "../../reversi/public/Stone.h"
 
-namespace winsoc {
-
-    class Strings {
+namespace winsoc
+{
+    class Strings
+    {
     public:
         inline static std::string OtherPlayerTurn = "相手のターンです";
         inline static std::string YourTurn = "あなたのターンです";
@@ -29,15 +30,12 @@ namespace winsoc {
             {
                 return Named(mine) + std::to_string(col) + "," + std::to_string(row) + "に置きました";
             }
-            else if (result == Result::Error)
+            if (result == Result::Error)
             {
                 // 自分にしか送らないので名指しは避ける
                 return std::to_string(col) + "," + std::to_string(row) + "に置けませんでした";
             }
-            else
-            {
-                return "予期せぬエラーが発生しました";  
-            }
+            return "予期せぬエラーが発生しました";
         }
 
         inline static std::string NotInSession = "セッションに参加していません";
@@ -51,7 +49,7 @@ namespace winsoc {
         {
             return otherId + "からリクエストが拒否されました。";
         }
-        
+
         static std::string FailUserConnect(int otherId)
         {
             return otherId + "は現在遊べる状態ではないです。";
@@ -68,7 +66,6 @@ namespace winsoc {
             return mine ? "あなたが" : "相手が";
         }
     };
-
 } // winsoc
 
 #endif //WORK_STRINGS_H

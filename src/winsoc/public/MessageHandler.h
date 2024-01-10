@@ -22,7 +22,8 @@ namespace winsoc
             try
             {
                 const std::any payload = DeserializePayload(message);
-                if (payload.type() == typeid(int)) {
+                if (payload.type() == typeid(int))
+                {
                     id = std::any_cast<int>(payload);
                     return 0;
                 }
@@ -41,7 +42,8 @@ namespace winsoc
             try
             {
                 const std::any payload = DeserializePayload(message);
-                if (payload.type() == typeid(std::vector<int>)) {
+                if (payload.type() == typeid(std::vector<int>))
+                {
                     array = std::any_cast<std::vector<int>>(payload);
                     return 0;
                 }
@@ -60,9 +62,11 @@ namespace winsoc
             try
             {
                 const std::any payload = DeserializePayload(message);
-                if (payload.type() == typeid(std::vector<int>)) {
+                if (payload.type() == typeid(std::vector<int>))
+                {
                     auto list = std::any_cast<std::vector<int>>(payload);
-                    if (list.size() == 2) {
+                    if (list.size() == 2)
+                    {
                         return {list[0], list[1]};
                     }
                     throw std::bad_any_cast();
@@ -76,14 +80,17 @@ namespace winsoc
                 return {-1, -1};
             }
         }
+
         static std::vector<int> GetPlaceStone(const Message& message)
         {
             try
             {
                 const std::any payload = DeserializePayload(message);
-                if (payload.type() == typeid(std::vector<int>)) {
+                if (payload.type() == typeid(std::vector<int>))
+                {
                     auto list = std::any_cast<std::vector<int>>(payload);
-                    if (list.size() == 3) {
+                    if (list.size() == 3)
+                    {
                         return {list[0], list[1], list[2]};
                     }
                     throw std::bad_any_cast();
@@ -110,7 +117,7 @@ namespace winsoc
             case MessageType::UserPlayRequested:
             case MessageType::RequestGameStart:
                 return PayloadType::Int;
-           
+
             case MessageType::GameEnd:
             case MessageType::UserList:
             case MessageType::RequestMove:

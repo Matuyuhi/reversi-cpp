@@ -14,7 +14,7 @@ namespace winsoc
         Error = 1,
         None = 2
     };
-    
+
     enum class MessageType
     {
         // server
@@ -48,7 +48,8 @@ namespace winsoc
         String,
     };
 
-    class MessageTypeUtil {
+    class MessageTypeUtil
+    {
     private:
         inline static const std::map<MessageType, std::string> messageTypeToString = {
             {MessageType::Connected, "Connected"},
@@ -73,18 +74,24 @@ namespace winsoc
             {MessageType::RequestMessage, "RequestMessage"},
             {MessageType::RequestInReversiMsg, "RequestInReversiMsg"}
         };
+
     public:
-        static std::string ToString(MessageType type) {
+        static std::string ToString(MessageType type)
+        {
             auto it = messageTypeToString.find(type);
-            if (it != messageTypeToString.end()) {
+            if (it != messageTypeToString.end())
+            {
                 return it->second;
             }
             return "Unknown";
         }
 
-        static MessageType FromString(const std::string& str) {
-            for (const auto& pair : messageTypeToString) {
-                if (pair.second == str) {
+        static MessageType FromString(const std::string& str)
+        {
+            for (const auto& pair : messageTypeToString)
+            {
+                if (pair.second == str)
+                {
                     return pair.first;
                 }
             }
@@ -97,23 +104,27 @@ namespace winsoc
         MessageType type;
         std::string payload;
         Result result = Result::None;
+
         Message(MessageType type, std::string payload)
         {
             this->type = type;
             this->payload = payload;
         }
+
         Message(MessageType type, std::string payload, Result result)
         {
             this->type = type;
             this->payload = payload;
             this->result = result;
         }
+
         Message(MessageType type, std::string payload, int resultCode)
         {
             this->type = type;
             this->payload = payload;
             this->result = static_cast<Result>(resultCode);
         }
+
         void CoutMessage() const
         {
             std::cout << "受信: " << MessageTypeUtil::ToString(this->type) << "**" << this->payload << '\n';

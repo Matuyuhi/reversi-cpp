@@ -94,7 +94,7 @@ public:
     /// @param col 置くマスの列番号 0~(n-1)
     /// @param color 置く石の色
     /// @return 石を置けたかどうか
-    bool placeStone(int row, int col, const stone color);
+    bool placeStone(int row, int col, stone color);
 
     /// 直前に行った手を一つ戻すメソッド\n
     /// 注意して使う

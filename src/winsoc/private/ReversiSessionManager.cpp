@@ -4,5 +4,6 @@
 
 #include "../public/ReversiSessionManager.h"
 
-namespace winsoc {
+namespace winsoc
+{
 } // winsoc
