@@ -38,6 +38,7 @@ namespace winsoc
         Disconnected,
 
         RequestMessage,
+        RequestInReversiMsg
     };
 
     enum class PayloadType
@@ -70,6 +71,7 @@ namespace winsoc
             {MessageType::Disconnected, "Disconnected"},
 
             {MessageType::RequestMessage, "RequestMessage"},
+            {MessageType::RequestInReversiMsg, "RequestInReversiMsg"}
         };
     public:
         static std::string ToString(MessageType type) {

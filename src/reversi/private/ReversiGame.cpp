@@ -36,7 +36,7 @@ void ReversiGame::Clear()
 
 ReversiGame::FinishedState ReversiGame::Start()
 {
-    srand(time(nullptr));
+    srand(static_cast<unsigned int>(time(nullptr)));
     // 現在のプレイヤーを黒に設定する
     auto currentPlayer = stone::Black;
     printBoard(currentPlayer);

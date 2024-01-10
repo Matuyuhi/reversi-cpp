@@ -7,7 +7,7 @@
 #include <string>
 
 #include "Message.h"
-#include "../../riversi/public/Stone.h"
+#include "../../reversi/public/Stone.h"
 
 namespace winsoc {
 
@@ -50,6 +50,11 @@ namespace winsoc {
         static std::string FailStartGame(int otherId)
         {
             return otherId + "からリクエストが拒否されました。";
+        }
+        
+        static std::string FailUserConnect(int otherId)
+        {
+            return otherId + "は現在遊べる状態ではないです。";
         }
 
         static std::string SuccessStartGame(int otherId)

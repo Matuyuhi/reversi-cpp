@@ -32,12 +32,12 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="src\main.cpp"/>
-        <ClCompile Include="src\riversi\private\AIPlayer.cpp"/>
-        <ClCompile Include="src\riversi\private\Input.cpp"/>
-        <ClCompile Include="src\riversi\private\InputPlayer.cpp"/>
-        <ClCompile Include="src\riversi\private\ReversiAI.cpp"/>
-        <ClCompile Include="src\riversi\private\ReversiBoard.cpp"/>
-        <ClCompile Include="src\riversi\private\ReversiGame.cpp"/>
+        <ClCompile Include="src\reversi\private\AIPlayer.cpp"/>
+        <ClCompile Include="src\reversi\private\Input.cpp"/>
+        <ClCompile Include="src\reversi\private\InputPlayer.cpp"/>
+        <ClCompile Include="src\reversi\private\ReversiAI.cpp"/>
+        <ClCompile Include="src\reversi\private\ReversiBoard.cpp"/>
+        <ClCompile Include="src\reversi\private\ReversiGame.cpp"/>
         <ClCompile Include="src\winsoc\private\MessageHandler.cpp"/>
         <ClCompile Include="src\winsoc\private\NetworkEntity.cpp"/>
         <ClCompile Include="src\winsoc\private\ReversiClient.cpp"/>
@@ -46,17 +46,17 @@
         <ClCompile Include="src\winsoc\private\Sender.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="src\riversi\public\AIPlayer.h"/>
-        <ClInclude Include="src\riversi\public\cout.h"/>
-        <ClInclude Include="src\riversi\public\Input.h"/>
-        <ClInclude Include="src\riversi\public\InputPlayer.h"/>
-        <ClInclude Include="src\riversi\public\IPlayer.h"/>
-        <ClInclude Include="src\riversi\public\List.h"/>
-        <ClInclude Include="src\riversi\public\ReversiAI.h"/>
-        <ClInclude Include="src\riversi\public\ReversiBoard.h"/>
-        <ClInclude Include="src\riversi\public\ReversiGame.h"/>
-        <ClInclude Include="src\riversi\public\Stone.h"/>
-        <ClInclude Include="src\riversi\public\TurnState.h"/>
+        <ClInclude Include="src\reversi\public\AIPlayer.h"/>
+        <ClInclude Include="src\reversi\public\cout.h"/>
+        <ClInclude Include="src\reversi\public\Input.h"/>
+        <ClInclude Include="src\reversi\public\InputPlayer.h"/>
+        <ClInclude Include="src\reversi\public\IPlayer.h"/>
+        <ClInclude Include="src\reversi\public\List.h"/>
+        <ClInclude Include="src\reversi\public\ReversiAI.h"/>
+        <ClInclude Include="src\reversi\public\ReversiBoard.h"/>
+        <ClInclude Include="src\reversi\public\ReversiGame.h"/>
+        <ClInclude Include="src\reversi\public\Stone.h"/>
+        <ClInclude Include="src\reversi\public\TurnState.h"/>
         <ClInclude Include="src\winsoc\public\Message.h"/>
         <ClInclude Include="src\winsoc\public\MessageHandler.h"/>
         <ClInclude Include="src\winsoc\public\NetworkEntity.h"/>

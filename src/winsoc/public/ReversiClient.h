@@ -63,7 +63,7 @@ namespace winsoc
         // 0~7
         int inputRow = -1;
 
-        bool IsInRiversi()
+        bool IsInReversi()
         {
             return
                 state == ClientState::InReversi ||
@@ -76,7 +76,7 @@ namespace winsoc
             if (state == ClientState::Idle)
             {
                 IdleInputHandler(input);
-            }else if (IsInRiversi())
+            }else if (IsInReversi())
             {
                 InReversiInputHandler(input);
             } else if (state == ClientState::RequestedPlay) {
@@ -172,7 +172,7 @@ namespace winsoc
                 std::cout << Strings::WaitServer << '\n';
             } else
             {
-                Sender::SendMsg(connectSocket, input.second);
+                Sender::SendInReversiMsg(connectSocket, input.second);
             }
         }
 

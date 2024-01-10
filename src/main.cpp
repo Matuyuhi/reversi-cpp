@@ -1,7 +1,7 @@
 ﻿//
 // Created by matuyuhi on 2023/11/03.
 //
-#include "riversi/public/ReversiGame.h"
+#include "reversi/public/ReversiGame.h"
 #include "winsoc/public/NetworkEntity.h"
 #include "winsoc/public/ReversiServer.h"
 #include "winsoc/public/ReversiClient.h"

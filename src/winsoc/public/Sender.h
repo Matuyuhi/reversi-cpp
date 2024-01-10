@@ -13,7 +13,7 @@
 #include <thread>
 #include <vector>
 #include "Message.h"
-#include "../../riversi/public/Stone.h"
+#include "../../reversi/public/Stone.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -30,6 +30,10 @@ namespace winsoc
         static void SendMsg(const SOCKET& socket, const std::string& message)
         {
             Send(socket, Message{MessageType::RequestMessage, message});
+        }
+        static void SendInReversiMsg(const SOCKET& socket, const std::string& message)
+        {
+            Send(socket, Message{MessageType::RequestInReversiMsg, message});
         }
 
         static void SendPlaceStone(const SOCKET& socket, int stoneId, int row, int col)
@@ -58,10 +62,9 @@ namespace winsoc
             Send(socket, Message{MessageType::WaitMove, ""});
         }
 
-        static void SendGameEnd(const SOCKET& socket, const std::vector<int>& array)
+        static void SendGameEnd(const SOCKET& socket, const std::string& message, const Result result)
         {
-            std::string payload = SerializeIntArray(array);
-            Send(socket, Message{MessageType::GameEnd, payload});
+            Send(socket, Message{MessageType::GameEnd, message, result});
         }
 
         static void SendError(const SOCKET& socket, const std::string& message)

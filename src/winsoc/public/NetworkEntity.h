@@ -12,7 +12,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
-#include "../../riversi/public/Input.h"
+#include "../../reversi/public/Input.h"
 
 #pragma comment(lib, "ws2_32.lib")
 

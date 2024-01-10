@@ -4,7 +4,7 @@
 
 #ifndef WORK_REVERSISESSIONMANAGER_H
 #define WORK_REVERSISESSIONMANAGER_H
-#include "../../riversi/public/ReversiBoard.h"
+#include "../../reversi/public/ReversiBoard.h"
 
 namespace winsoc {
 
@@ -41,6 +41,11 @@ namespace winsoc {
         bool IsCanPlaceStone(int row, int col, const stone color) const
         {
             return isCanPlace(row, col, color);
+        }
+        
+        bool finished()
+        {
+            return ReversiBoard::finished();
         }
     };
 

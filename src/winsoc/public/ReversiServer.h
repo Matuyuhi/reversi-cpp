@@ -29,7 +29,8 @@ namespace winsoc
         enum ClientState
         {
             Idle,
-            InRiversi,
+            InReversi,
+            Disconnect,
             None
         };
 
@@ -65,7 +66,7 @@ namespace winsoc
             
             ~_SessionInfo()
             {
-                delete[] clients;
+                // delete[] clients;
             }
 
             void Initialized()
@@ -116,10 +117,20 @@ namespace winsoc
         private:
             void SendToggleTurn()
             {
+                if (board.finished())
+                {
+                    SendFinished();
+                    return;
+                }
                 Sender::SendMsg(clients[currentTurn]->socket, Strings::OtherPlayerTurn);
                 // ターンの切り替え
                 currentTurn = currentTurn == 0 ? 1 : 0;
                 Sender::SendWaitMove(clients[currentTurn]->socket);
+            }
+            
+            void SendFinished()
+            {
+                
             }
         };
 
@@ -181,6 +192,8 @@ namespace winsoc
                 case MessageType::RequestMessage:
                     SendAllClient(clientId, message.payload);
                     break;
+                case MessageType::RequestInReversiMsg:
+                    
                 case MessageType::RequestUserList:
                     SendUserList(clientId);
                     break;
@@ -254,6 +267,17 @@ namespace winsoc
             }
         }
 
+        void SendClientToId(int ownerId, int sendId, std::string message) const
+        {
+            for (const std::pair<const int, ClientInfo*> clt : clientSockets)
+            {
+                if (clt.second->id == sendId)
+                {
+                    Sender::SendMsg(clt.second->socket, "client" + std::to_string(ownerId) + ":" + message);
+                }
+            }
+        }
+
         void UserPlayConnectRequest(int clientId, Message& message) const
         {
             int requestId = 0;
@@ -266,6 +290,11 @@ namespace winsoc
             if (clientSockets.contains(requestId))
             {
                 ClientInfo* requestClient = clientSockets.at(requestId);
+                if (requestClient->state != ClientState::Idle)
+                {
+                    Sender::SendMsg(clientSockets.at(requestId)->socket, Strings::FailUserConnect(requestId));
+                    return;
+                }
                 Sender::SendUserPlayRequested(requestClient->socket, clientId);
                 return;
             }
@@ -323,6 +352,7 @@ namespace winsoc
             SessionInfo* session = sessions.at(sessionId);
             
         }
+
         SOCKET SetupListeningSocket() const
         {
             const SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -366,7 +396,7 @@ namespace winsoc
             if (clientSockets.contains(clientId))
             {
                 closesocket(clientSockets[clientId]->socket);
-                clientSockets.erase(clientId);
+                clientSockets[clientId]->state = ClientState::Disconnect;
                 std::cout << "クライアント " << clientId << " が切断されました。\n";
             }
         }

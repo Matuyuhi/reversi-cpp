@@ -14,13 +14,13 @@
     <Filter Include="リソース ファイル\winsoc\public">
       <UniqueIdentifier>{026ac9a8-fa46-4913-9111-5eeea0b99ad8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="リソース ファイル\riversi">
+    <Filter Include="リソース ファイル\reversi">
       <UniqueIdentifier>{74052df2-5d9f-4440-80b3-2e30794c7ab4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="リソース ファイル\riversi\private">
+    <Filter Include="リソース ファイル\reversi\private">
       <UniqueIdentifier>{c177047e-d7ac-443f-bff2-91622fb40ae8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="リソース ファイル\riversi\public">
+    <Filter Include="リソース ファイル\reversi\public">
       <UniqueIdentifier>{3b1467f8-bf94-4e07-a8df-9174f5eaabd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -37,23 +37,23 @@
     <ClCompile Include="src\winsoc\private\Sender.cpp">
       <Filter>リソース ファイル\winsoc\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\riversi\private\AIPlayer.cpp">
-      <Filter>リソース ファイル\riversi\private</Filter>
+    <ClCompile Include="src\reversi\private\AIPlayer.cpp">
+      <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\riversi\private\Input.cpp">
-      <Filter>リソース ファイル\riversi\private</Filter>
+    <ClCompile Include="src\reversi\private\Input.cpp">
+      <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\riversi\private\InputPlayer.cpp">
-      <Filter>リソース ファイル\riversi\private</Filter>
+    <ClCompile Include="src\reversi\private\InputPlayer.cpp">
+      <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\riversi\private\ReversiAI.cpp">
-      <Filter>リソース ファイル\riversi\private</Filter>
+    <ClCompile Include="src\reversi\private\ReversiAI.cpp">
+      <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\riversi\private\ReversiBoard.cpp">
-      <Filter>リソース ファイル\riversi\private</Filter>
+    <ClCompile Include="src\reversi\private\ReversiBoard.cpp">
+      <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\riversi\private\ReversiGame.cpp">
-      <Filter>リソース ファイル\riversi\private</Filter>
+    <ClCompile Include="src\reversi\private\ReversiGame.cpp">
+      <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>リソース ファイル</Filter>
@@ -78,38 +78,38 @@
     <ClInclude Include="src\winsoc\public\Sender.h">
       <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\AIPlayer.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\AIPlayer.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\cout.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\cout.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\Input.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\Input.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\InputPlayer.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\InputPlayer.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\IPlayer.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\IPlayer.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\List.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\List.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\ReversiAI.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\ReversiAI.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\ReversiBoard.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\ReversiBoard.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\ReversiGame.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\ReversiGame.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\Stone.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\Stone.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
-    <ClInclude Include="src\riversi\public\TurnState.h">
-      <Filter>リソース ファイル\riversi\public</Filter>
+    <ClInclude Include="src\reversi\public\TurnState.h">
+      <Filter>リソース ファイル\reversi\public</Filter>
     </ClInclude>
     <ClInclude Include="src\winsoc\public\Message.h">
       <Filter>リソース ファイル\winsoc\public</Filter>
