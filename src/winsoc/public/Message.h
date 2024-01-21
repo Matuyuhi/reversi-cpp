@@ -12,7 +12,12 @@ namespace winsoc
     {
         Success = 0,
         Error = 1,
-        None = 2
+        None = 2,
+        
+        // api有の結果
+        GameEndWin = 3,
+        GameEndLose = 4,
+        GameEndDraw = 5,
     };
 
     enum class MessageType

@@ -27,8 +27,6 @@ namespace winsoc
         virtual ~NetworkEntity() = default;
 
     protected:
-        /// ポート番号
-        int portNum = 9122;
         /// Winsockの初期化
         WSADATA wsaData;
 

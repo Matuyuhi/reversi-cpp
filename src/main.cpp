@@ -18,7 +18,7 @@ int main()
     int userSelected;
     while (true)
     {
-        std::cout << "サーバーかクライアントかを選んでください" << '\n';
+        std::cout << "サーバーかクライアントかを選んでください\n入力: ";
         std::cout << SelectedServer << ": サーバー  " << SelectedClient << ": クライアント" << '\n';
         std::pair<int, std::string> input = Input::getInputNumbers();
         if (input.first == INPUT_ERROR_NUMBER)
@@ -44,26 +44,6 @@ int main()
         entity = new winsoc::ReversiClient();
     }
     entity->Start();
-    auto game = new ReversiGame();
-    while (true)
-    {
-        const ReversiGame::FinishedState res = game->Start();
-        //　例外
-        if (res == ReversiGame::FinishedState::Error)
-        {
-            std::cout << "エラーが発生しました" << '\n';
-            break;
-        }
-        // 終わり
-        if (res == ReversiGame::FinishedState::Quit)
-        {
-            std::cout << "終了します" << '\n';
-            break;
-        }
-        // 再スタート
-        game->Clear();
-    }
-    delete game;
-
+    delete entity;
     return 0;
 }

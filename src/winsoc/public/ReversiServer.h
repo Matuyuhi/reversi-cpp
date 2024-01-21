@@ -136,6 +136,39 @@ namespace winsoc
 
             void SendFinished()
             {
+                int index = 0;
+                int counts[] = {
+                    board.getStoneCount(ClientStone(0)),
+                    board.getStoneCount(ClientStone(1))
+                };
+                for (auto client : clients)
+                {
+                    if (!board.getStoneCount(stone::Empty))
+                    {
+                        // 空きマスがない場合
+                        Sender::SendMsg(client->socket, "ゲームを終了します");
+                    }
+                    else if (board.getPlaceableCells(stone::Black).size() == 0 || board.getPlaceableCells(stone::White).size() == 0)
+                    {
+                        // 空きマスがある場合
+                        Sender::SendMsg(client->socket, "おけるマスがないため、ゲームを終了します");
+                    }
+
+                    if (counts[index] > counts[!index])
+                    {
+                        Sender::SendGameEnd(client->socket, "あなたの勝ちです", Result::GameEndWin);
+                    }
+                    else if (counts[index] < counts[!index])
+                    {
+                        Sender::SendGameEnd(client->socket,"あなたの勝ちです", Result::GameEndLose);
+                    }
+                    else
+                    {
+                        Sender::SendGameEnd(client->socket, "あなたの勝ちです", Result::GameEndDraw);
+                    }
+                    index++;
+                }
+               
             }
         };
 
@@ -143,6 +176,8 @@ namespace winsoc
         std::atomic<int> nextClientId{1};
         std::mutex socketsMutex;
         std::unordered_map<int, SessionInfo*> sessions;
+
+        int portNum = 9122;
 
         void AddClient(ClientInfo* client)
         {
@@ -179,7 +214,7 @@ namespace winsoc
             while (true)
             {
                 client = GetClient(clientId);
-                std::cout << "受信待ち" << '\n';
+//                std::cout << "受信待ち" << '\n';
                 const int bytesReceived = recv(client->socket, buffer, INPUT_BUFFER_SIZE, 0);
                 if (bytesReceived == SOCKET_ERROR || bytesReceived == 0)
                 {
@@ -191,7 +226,7 @@ namespace winsoc
 
                 std::string msgReceived(buffer, bytesReceived);
                 Message message = Sender::Deserialize(msgReceived);
-
+                message.CoutMessage();
                 switch (message.type)
                 {
                 case MessageType::RequestMessage:
@@ -355,12 +390,24 @@ namespace winsoc
             SessionInfo* session = sessions.at(sessionId);
         }
 
-        SOCKET SetupListeningSocket() const
+        SOCKET SetupListeningSocket()
         {
-            const SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-            if (listenSocket < 0)
+            /// ポート番号の指定 ///
+
+            std::cout << "ポートを指定してください" << '\n';
+            std::pair<int, std::string> input = Input::getInputNumbers();
+            if (input.first == INPUT_ERROR_NUMBER) /// 入力が不正ならdefaultの番号を使う
             {
-                std::cout << "ソケットオープンエラー\n";
+                std::cout << "エラーが発生しました" << '\n';
+                std::cout << "デフォルトのポート: " << portNum << "を使用します" << '\n';
+            }
+            /// ポート番号の更新
+            portNum = input.first;
+
+            const SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            if (listenSocket == INVALID_SOCKET)
+            {
+                std::cerr << "ソケットオープンエラー: " << WSAGetLastError() << '\n';
                 WSACleanup();
                 return -1;
             }
@@ -373,7 +420,12 @@ namespace winsoc
 
             if (bind(listenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
             {
-                std::cout << "bindのエラー\n";
+                int errorCode = WSAGetLastError();
+                std::cerr << "bindのエラー: " << errorCode << '\n';
+                if (errorCode == WSAEADDRINUSE)
+                {
+                    std::cerr << "ポートが既に使用されています。\n";
+                }
                 closesocket(listenSocket);
                 WSACleanup();
                 return -1;
@@ -382,12 +434,35 @@ namespace winsoc
 
             if (listen(listenSocket, 0) == SOCKET_ERROR)
             {
-                std::cout << "listen error.\n";
+                std::cerr << "listen error: " << WSAGetLastError() << '\n';
                 closesocket(listenSocket);
                 WSACleanup();
                 return -1;
             }
-            std::cout << "listen成功\n";
+            char hostname[256];
+            if (gethostname(hostname, sizeof(hostname)) == SOCKET_ERROR)
+            {
+                std::cerr << "gethostname failed with error: " << WSAGetLastError() << '\n';
+            }
+            else
+            {
+                struct hostent *host = gethostbyname(hostname);
+                if (host != nullptr)
+                {
+                    std::cout << "Host name: " << host->h_name << '\n';
+                    std::cout << "IP Address(es): ";
+                    for (int i = 0; host->h_addr_list[i] != 0; ++i)
+                    {
+                        struct in_addr addr;
+                        memcpy(&addr, host->h_addr_list[i], sizeof(struct in_addr));
+                        std::cout << inet_ntoa(addr) << "\n";
+                    }
+                }
+            }
+
+            std::cout << "Listening on port: " << ntohs(serverAddr.sin_port) << '\n';
+
+            std::cout << "listen成功\nクライアントで";
 
             return listenSocket;
         }
@@ -423,6 +498,10 @@ namespace winsoc
             InitializeWinsock();
 
             SOCKET listenSocket = SetupListeningSocket();
+            if (listenSocket == -1)
+            {
+                return;
+            }
 
             while (true)
             {

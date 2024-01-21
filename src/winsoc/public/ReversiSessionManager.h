@@ -53,6 +53,19 @@ namespace winsoc
         {
             return ReversiBoard::finished();
         }
+
+        int getStoneCount(stone color)
+        {
+            return ReversiBoard::getStoneCount(color);
+        }
+
+        List<std::pair<int, int>> getPlaceableCells(stone color) {
+            return ReversiBoard::getPlaceableCells(color);
+        }
+        std::map<stone, int> getStonesCount()
+        {
+            return ReversiBoard::getStonesCount();
+        }
     };
 } // winsoc
 
