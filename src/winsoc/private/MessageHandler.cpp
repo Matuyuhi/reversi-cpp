@@ -6,7 +6,8 @@
 
 namespace winsoc
 {
-    int MessageHandler::GetSingleIntValue(const Message &message, int &id) {
+    int MessageHandler::GetSingleIntValue(const Message& message, int& id)
+    {
         try
         {
             const std::any payload = DeserializePayload(message);
@@ -25,7 +26,8 @@ namespace winsoc
         }
     }
 
-    int MessageHandler::GetUserList(const Message &message, std::vector<int> &array) {
+    int MessageHandler::GetUserList(const Message& message, std::vector<int>& array)
+    {
         try
         {
             const std::any payload = DeserializePayload(message);
@@ -44,7 +46,8 @@ namespace winsoc
         }
     }
 
-    std::pair<int, int> MessageHandler::GetMoveInfo(const Message &message) {
+    std::pair<int, int> MessageHandler::GetMoveInfo(const Message& message)
+    {
         try
         {
             const std::any payload = DeserializePayload(message);
@@ -67,7 +70,8 @@ namespace winsoc
         }
     }
 
-    std::vector<int> MessageHandler::GetPlaceStone(const Message &message) {
+    std::vector<int> MessageHandler::GetPlaceStone(const Message& message)
+    {
         try
         {
             const std::any payload = DeserializePayload(message);
@@ -90,50 +94,53 @@ namespace winsoc
         }
     }
 
-    PayloadType MessageHandler::GetPayloadType(const Message &message) {
+    PayloadType MessageHandler::GetPayloadType(const Message& message)
+    {
         switch (message.type)
         {
-            case MessageType::Connected:
-            case MessageType::GameStart:
-            case MessageType::RequestConnectToPlayClient:
-            case MessageType::FailConnectedPlayClient:
-            case MessageType::UserPlayRequested:
-            case MessageType::RequestGameStart:
-                return PayloadType::Int;
+        case MessageType::Connected:
+        case MessageType::GameStart:
+        case MessageType::RequestConnectToPlayClient:
+        case MessageType::FailConnectedPlayClient:
+        case MessageType::UserPlayRequested:
+        case MessageType::RequestGameStart:
+            return PayloadType::Int;
 
-            case MessageType::GameEnd:
-            case MessageType::UserList:
-            case MessageType::RequestMove:
-            case MessageType::PlaceStone:
-                return PayloadType::IntArray;
+        case MessageType::GameEnd:
+        case MessageType::UserList:
+        case MessageType::RequestMove:
+        case MessageType::PlaceStone:
+            return PayloadType::IntArray;
 
-            case MessageType::RequestGameEnd:
-            case MessageType::Disconnected:
-            case MessageType::WaitMove:
-            case MessageType::Error:
-            case MessageType::RequestMessage:
-            case MessageType::RequestUserList:
-            case MessageType::ResponseMove:
-                return PayloadType::String;
+        case MessageType::RequestGameEnd:
+        case MessageType::Disconnected:
+        case MessageType::WaitMove:
+        case MessageType::Error:
+        case MessageType::RequestMessage:
+        case MessageType::RequestUserList:
+        case MessageType::ResponseMove:
+            return PayloadType::String;
         }
         std::cout << "Unknown PayloadType\n";
         return PayloadType::String;
     }
 
-    std::any MessageHandler::DeserializePayload(const Message &message) {
+    std::any MessageHandler::DeserializePayload(const Message& message)
+    {
         switch (GetPayloadType(message))
         {
-            case PayloadType::Int:
-                return std::stoi(message.payload);
-            case PayloadType::IntArray:
-                return DeserializeIntArray(message.payload);
-            case PayloadType::String:
-                return message.payload;
+        case PayloadType::Int:
+            return std::stoi(message.payload);
+        case PayloadType::IntArray:
+            return DeserializeIntArray(message.payload);
+        case PayloadType::String:
+            return message.payload;
         }
         return "";
     }
 
-    std::vector<int> MessageHandler::DeserializeIntArray(const std::string &payload) {
+    std::vector<int> MessageHandler::DeserializeIntArray(const std::string& payload)
+    {
         std::vector<int> array;
         std::stringstream ss(payload);
         std::string element;

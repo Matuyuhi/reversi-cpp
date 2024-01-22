@@ -6,7 +6,8 @@
 
 namespace winsoc
 {
-    void ReversiClient::Start() {
+    void ReversiClient::Start()
+    {
         InitializeWinsock();
 
         std::cin.clear();
@@ -30,14 +31,16 @@ namespace winsoc
         CleanupWinsock();
     }
 
-    bool ReversiClient::IsInReversi() {
+    bool ReversiClient::IsInReversi()
+    {
         return
-                state == ClientState::InReversi ||
-                state == ClientState::WaitMoveRequest ||
-                state == ClientState::WaitMoveResponse;
+            state == ClientState::InReversi ||
+            state == ClientState::WaitMoveRequest ||
+            state == ClientState::WaitMoveResponse;
     }
 
-    void ReversiClient::InputHandler(const std::pair<int, std::string>& input) {
+    void ReversiClient::InputHandler(const std::pair<int, std::string>& input)
+    {
         if (input.second == Strings::End)
         {
             std::cout << Strings::SendDisconnect << "\n";
@@ -59,7 +62,8 @@ namespace winsoc
         }
     }
 
-    void ReversiClient::RequestPlayInputHandler(const std::pair<int, std::string>& input) {
+    void ReversiClient::RequestPlayInputHandler(const std::pair<int, std::string>& input)
+    {
         if (input.first == 1)
         {
             // play
@@ -80,8 +84,8 @@ namespace winsoc
         }
     }
 
-    void ReversiClient::IdleInputHandler(const std::pair<int, std::string>& input) {
-
+    void ReversiClient::IdleInputHandler(const std::pair<int, std::string>& input)
+    {
         if (input.first == INPUT_ERROR_NUMBER)
         {
             Sender::SendMsg(connectSocket, input.second);
@@ -106,13 +110,15 @@ namespace winsoc
             std::cout << Strings::SendGameRequest(findId) << "\n";
             Sender::SendRequestPlayClient(connectSocket, findId);
             return;
-        } else {
+        }
+        else
+        {
             std::cout << Strings::NotFoundUser << '\n';
         }
-
     }
 
-    void ReversiClient::InReversiInputHandler(const std::pair<int, std::string>& input) {
+    void ReversiClient::InReversiInputHandler(const std::pair<int, std::string>& input)
+    {
         if (state == ClientState::WaitMoveRequest)
         {
             if (input.first == INPUT_ERROR_NUMBER)
@@ -147,7 +153,8 @@ namespace winsoc
         }
     }
 
-    void ReversiClient::SendMoveRequest() {
+    void ReversiClient::SendMoveRequest()
+    {
         if (inputCol == -1 || inputRow == -1)
         {
             std::cout << Strings::ErrorClientMoveRequest << '\n';
@@ -157,7 +164,8 @@ namespace winsoc
         state = ClientState::WaitMoveResponse;
     }
 
-    void ReversiClient::ReceiveMessages() {
+    void ReversiClient::ReceiveMessages()
+    {
         char buffer[INPUT_BUFFER_SIZE];
         while (running)
         {
@@ -173,46 +181,47 @@ namespace winsoc
             // message.CoutMessage();
             switch (message.type)
             {
-                case MessageType::RequestMessage:
-                    // todo
-                    std::cout << message.payload << "\n";
-                    break;
+            case MessageType::RequestMessage:
+                // todo
+                std::cout << message.payload << "\n";
+                break;
             case MessageType::Connected:
-                    // todo
-                    std::cout << Strings::SuccessConnect <<"\n";
-                    MessageHandler::GetSingleIntValue(message, userId);
-                    std::cout << Strings::ServerConnectedMessage(userId) << '\n';
-                    Sender::SendRequestUserList(connectSocket);
-                    break;
-                case MessageType::UserList:
-                    GetUserList(message);
-                    break;
-                case MessageType::UserPlayRequested:
-                    GetRequestUserPlay(message);
-                    break;
-                case MessageType::FailConnectedPlayClient:
-                case MessageType::GameStart:
-                    GetPlayUserResponse(message);
-                    break;
-                case MessageType::ResponseMove:
-                    GetMoveResponse(message);
-                    break;
-                case MessageType::PlaceStone:
-                    UpdateStone(message);
-                    break;
-                case MessageType::WaitMove:
-                    RequireMoveInput();
-                    break;
-                case MessageType::GameEnd:
-                    FinishedGame(message);
-                    break;
-                default:
-                    break;
+                // todo
+                std::cout << Strings::SuccessConnect << "\n";
+                MessageHandler::GetSingleIntValue(message, userId);
+                std::cout << Strings::ServerConnectedMessage(userId) << '\n';
+                Sender::SendRequestUserList(connectSocket);
+                break;
+            case MessageType::UserList:
+                GetUserList(message);
+                break;
+            case MessageType::UserPlayRequested:
+                GetRequestUserPlay(message);
+                break;
+            case MessageType::FailConnectedPlayClient:
+            case MessageType::GameStart:
+                GetPlayUserResponse(message);
+                break;
+            case MessageType::ResponseMove:
+                GetMoveResponse(message);
+                break;
+            case MessageType::PlaceStone:
+                UpdateStone(message);
+                break;
+            case MessageType::WaitMove:
+                RequireMoveInput();
+                break;
+            case MessageType::GameEnd:
+                FinishedGame(message);
+                break;
+            default:
+                break;
             }
         }
     }
 
-    void ReversiClient::FinishedGame(const Message& message) {
+    void ReversiClient::FinishedGame(const Message& message)
+    {
         Result result = message.result;
         std::map<stone, int> stonesCount = reversiBoard.getStonesCount();
         spacer();
@@ -226,7 +235,8 @@ namespace winsoc
         Sender::SendRequestUserList(connectSocket);
     }
 
-    void ReversiClient::UpdateStone(const Message& message) {
+    void ReversiClient::UpdateStone(const Message& message)
+    {
         std::vector<int> response = MessageHandler::GetPlaceStone(message);
         if (response.size() != 3)
         {
@@ -237,7 +247,8 @@ namespace winsoc
         reversiBoard.PrintBoard(color);
     }
 
-    void ReversiClient::GetMoveResponse(const Message& message) {
+    void ReversiClient::GetMoveResponse(const Message& message)
+    {
         std::cout << message.payload << '\n';
         if (message.result == Result::Success)
         {
@@ -250,7 +261,8 @@ namespace winsoc
         }
     }
 
-    void ReversiClient::RequireMoveInput() {
+    void ReversiClient::RequireMoveInput()
+    {
         std::cout << Strings::YourTurn << '\n';
         state = ClientState::WaitMoveRequest;
         inputCol = -1;
@@ -258,7 +270,8 @@ namespace winsoc
         std::cout << Strings::InputCol;
     }
 
-    void ReversiClient::GetPlayUserResponse(const Message& message) {
+    void ReversiClient::GetPlayUserResponse(const Message& message)
+    {
         int requestId = 0;
         if (MessageHandler::GetSingleIntValue(message, requestId))
         {
@@ -279,7 +292,8 @@ namespace winsoc
         reversiBoard.PrintBoard(color);
     }
 
-    void ReversiClient::GetRequestUserPlay(const Message& message) {
+    void ReversiClient::GetRequestUserPlay(const Message& message)
+    {
         int requestedId = -1;
         MessageHandler::GetSingleIntValue(message, requestedId);
         std::cout << Strings::GameRequested(requestedId);
@@ -287,7 +301,8 @@ namespace winsoc
         otherId = requestedId;
     }
 
-    void ReversiClient::GetUserList(const Message& message) {
+    void ReversiClient::GetUserList(const Message& message)
+    {
         MessageHandler::GetUserList(message, currentUserList);
         if (currentUserList.empty())
         {
@@ -304,7 +319,8 @@ namespace winsoc
         std::cout << Strings::NavRefreshUserList << "\n入力:" << '\n';
     }
 
-    SOCKET ReversiClient::SetupConnection() const {
+    SOCKET ReversiClient::SetupConnection() const
+    {
         // ユーザーからの入力を受け取る関数
 
         // ユーザーからIPアドレスとポート番号を受け取る
@@ -312,7 +328,8 @@ namespace winsoc
         std::string portInput = GetUserInput(Strings::ClientInputPort(std::to_string(DEFAULT_PORT_NUMBER)));
 
         // 入力が空の場合はデフォルト値を使用
-        if (ipAddress.empty()) {
+        if (ipAddress.empty())
+        {
             ipAddress = DEFAULT_IP_ADDRESS;
         }
         int portNum = portInput.empty() ? DEFAULT_PORT_NUMBER : std::stoi(portInput);
@@ -333,7 +350,7 @@ namespace winsoc
         }
         if (lpHost == nullptr)
         {
-            std::cout << Strings::Error(3) <<"\n";
+            std::cout << Strings::Error(3) << "\n";
             closesocket(connectSocket);
             WSACleanup();
             return -1;
@@ -354,5 +371,4 @@ namespace winsoc
         std::cout << Strings::SuccessConnect << "\n";
         return connectSocket;
     }
-
 } // client

@@ -7,7 +7,8 @@
 
 #include "NetworkEntity.h"
 
-namespace winsoc {
+namespace winsoc
+{
     enum ClientState
     {
         Idle,

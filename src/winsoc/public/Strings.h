@@ -16,7 +16,9 @@ namespace winsoc
     {
     public:
         inline static std::string End = "end";
-        
+
+        inline static std::string SelectEntity = "サーバーかクライアントかを選んでください";
+
         inline static std::string OtherPlayerTurn = "相手のターンです";
         inline static std::string YourTurn = "あなたのターンです";
         inline static std::string NotYourTurn = "あなたのターンではありません";
@@ -33,6 +35,7 @@ namespace winsoc
 
         inline static std::string InputFailed = "入力に失敗しました";
         inline static std::string InputFormatFailed = "入力が不正です";
+        inline static std::string Require0or1Error = "0か1で入力してください";
 
         inline static std::string ErrorClientMoveRequest = "入力を完了せずにリクエストを送ろうとしています";
 
@@ -51,7 +54,7 @@ namespace winsoc
         inline static std::string StartFailedPleaseReselect = "始められませんでした。もう一度遊ぶ相手を選んでください";
 
         inline static std::string UserList = "ユーザーリスト";
-        
+
         inline static std::string NavRefreshUserList = "更新するには0,遊ぶ場合は相手のClientIdを入力してください";
 
         inline static std::string SocketOpenError = "ソケットオープンエラー";
@@ -83,6 +86,7 @@ namespace winsoc
         {
             return "IPアドレスを入力してください（Enterでデフォルト：" + defaultIP + "）: ";
         }
+
         static std::string ClientInputPort(std::string defaultPort)
         {
             return "ポート番号を入力してください（Enterでデフォルト：" + defaultPort + "）: ";
@@ -171,10 +175,9 @@ namespace winsoc
             return std::to_string(userId) + "からの対戦リクエストが来ました。\n対戦する場合は1,しない場合は0を入力してください\n入力:";
         }
 
-        
-
     private:
         inline static int baseErrorCode = 10000;
+
         static std::string Named(bool mine)
         {
             return mine ? "あなたが" : "相手が";

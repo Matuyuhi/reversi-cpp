@@ -22,8 +22,8 @@
 #include "../../reversi/public/ReversiAI.h"
 #include "ClientInfo.h"
 
-namespace winsoc {
-
+namespace winsoc
+{
     struct SessionInfo
     {
         ClientInfo* clients[2]{};
@@ -52,7 +52,6 @@ namespace winsoc {
 
         void SendFinished();
     };
-
 } // winsoc
 
 #endif //REVERSI_CPP_SESSIONINFO_H

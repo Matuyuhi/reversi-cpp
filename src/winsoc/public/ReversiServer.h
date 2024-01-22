@@ -29,7 +29,6 @@ namespace winsoc
     class ReversiServer : public NetworkEntity
     {
     private:
-
         std::unordered_map<int, ClientInfo*> clientSockets;
         std::mutex socketsMutex;
         std::unordered_map<int, SessionInfo*> sessions;

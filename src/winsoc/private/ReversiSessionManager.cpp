@@ -6,7 +6,8 @@
 
 namespace winsoc
 {
-    void ReversiSessionManager::Init() {
+    void ReversiSessionManager::Init()
+    {
         ReversiBoard::Initialized();
 
         /* ゲーム開始時の4つの石を配置 */
@@ -25,19 +26,23 @@ namespace winsoc
         Init();
     }
 
-    void ReversiSessionManager::SetStone(int row, int col, const stone color) {
+    void ReversiSessionManager::SetStone(int row, int col, const stone color)
+    {
         placeStone(row, col, color);
     }
 
-    void ReversiSessionManager::PrintBoard(stone color) {
+    void ReversiSessionManager::PrintBoard(stone color)
+    {
         printBoard(color);
     }
 
-    int ReversiSessionManager::getStoneCount(stone color) {
+    int ReversiSessionManager::getStoneCount(stone color)
+    {
         return ReversiBoard::getStoneCount(color);
     }
 
-    std::map<stone, int> ReversiSessionManager::getStonesCount() {
+    std::map<stone, int> ReversiSessionManager::getStonesCount()
+    {
         return ReversiBoard::getStonesCount();
     }
 } // winsoc

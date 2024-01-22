@@ -18,17 +18,18 @@ int main()
     int userSelected;
     while (true)
     {
-        std::cout << "サーバーかクライアントかを選んでください\n入力: ";
+        std::cout << winsoc::Strings::SelectEntity << "\n";
         std::cout << SelectedServer << ": サーバー  " << SelectedClient << ": クライアント" << '\n';
-        std::pair<int, std::string> input = Input::getInputNumbers();
+        std::cout << "\n入力: ";
+        const std::pair<int, std::string> input = Input::getInputNumbers();
         if (input.first == INPUT_ERROR_NUMBER)
         {
-            std::cout << "入力が不正です" << '\n';
+            std::cout << winsoc::Strings::InputFormatFailed << '\n';
             continue;
         }
         if (input.first != 0 && input.first != 1)
         {
-            std::cout << "0か1で入力してください" << '\n';
+            std::cout << winsoc::Strings::Require0or1Error << '\n';
             continue;
         }
         userSelected = input.first;

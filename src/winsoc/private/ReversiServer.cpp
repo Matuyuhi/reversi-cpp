@@ -8,7 +8,6 @@ namespace winsoc
 {
     SOCKET ReversiServer::SetupListeningSocket() const
     {
-        
         /// ポート番号の指定 ///
         const std::string portInput = GetUserInput(Strings::ClientInputPort(std::to_string(DEFAULT_PORT_NUMBER)));
         const int portNum = portInput.empty() ? DEFAULT_PORT_NUMBER : std::stoi(portInput);
@@ -54,7 +53,7 @@ namespace winsoc
         }
         else
         {
-            struct hostent *host = gethostbyname(hostname);
+            const hostent* host = gethostbyname(hostname);
             if (host != nullptr)
             {
                 std::cout << Strings::HostName << ": " << host->h_name << '\n';
@@ -70,12 +69,13 @@ namespace winsoc
 
         std::cout << Strings::ListenPort << ": " << ntohs(serverAddr.sin_port) << '\n';
 
-        std::cout << Strings::ServerSuccessListen <<"\n";
+        std::cout << Strings::ServerSuccessListen << "\n";
 
         return listenSocket;
     }
 
-    void ReversiServer::CloseClientConnection(int clientId) {
+    void ReversiServer::CloseClientConnection(int clientId)
+    {
         ClientInfo* client = GetClient(clientId);
         if (client == nullptr) return;
         client->state = Disconnect;
@@ -104,7 +104,8 @@ namespace winsoc
         }
     }
 
-    void ReversiServer::GameStart(int a, int b) {
+    void ReversiServer::GameStart(int a, int b)
+    {
         ClientInfo* clientA = clientSockets.at(a);
         ClientInfo* clientB = clientSockets.at(b);
 
@@ -115,9 +116,9 @@ namespace winsoc
         Sender::SendMsg(clientB->socket, Strings::CallClientStone(SessionInfo::ClientStone(1)));
         const int sessionId = static_cast<int>(sessions.size()) + 1;
         auto session = new SessionInfo{
-                clientA,
-                clientB,
-                sessionId
+            clientA,
+            clientB,
+            sessionId
         };
         clientA->state = InReversi;
         clientB->state = InReversi;
@@ -125,7 +126,8 @@ namespace winsoc
         AddSession(session);
     }
 
-    void ReversiServer::UserPlayConnectResponse(int clientId, Message &message) {
+    void ReversiServer::UserPlayConnectResponse(int clientId, Message& message)
+    {
         int requestId = -1;
         if (MessageHandler::GetSingleIntValue(message, requestId))
         {
@@ -136,7 +138,8 @@ namespace winsoc
         {
             // 対戦のrequest元
             ClientInfo* requestClient = clientSockets.at(requestId);
-            if (message.type == MessageType::RequestGameStart && requestClient->state == Idle && clientSockets.at(clientId)->state == Idle)
+            if (message.type == MessageType::RequestGameStart && requestClient->state == Idle && clientSockets.
+                at(clientId)->state == Idle)
             {
                 Sender::SendMsg(requestClient->socket, Strings::SuccessStartGame(clientId));
                 GameStart(clientId, requestId);
@@ -149,20 +152,24 @@ namespace winsoc
         }
     }
 
-    void ReversiServer::AddClient(ClientInfo *client) {
+    void ReversiServer::AddClient(ClientInfo* client)
+    {
         clientSockets[client->id] = client;
     }
 
-    void ReversiServer::AddSession(SessionInfo *session) {
+    void ReversiServer::AddSession(SessionInfo* session)
+    {
         sessions[session->sessionId] = session;
     }
 
-    void ReversiServer::DeleteClient(int clientId) {
+    void ReversiServer::DeleteClient(int clientId)
+    {
         // クライアントIDに基づいてエントリを削除
         clientSockets.erase(clientId);
     }
 
-    ClientInfo *ReversiServer::GetClient(int clientId) {
+    ClientInfo* ReversiServer::GetClient(int clientId)
+    {
         const auto it = clientSockets.find(clientId);
         if (it != clientSockets.end() && it->second->id == clientId)
         {
@@ -171,14 +178,15 @@ namespace winsoc
         return nullptr;
     }
 
-    void ReversiServer::HandleClient(int clientId) {
+    void ReversiServer::HandleClient(int clientId)
+    {
         ClientInfo* client = GetClient(clientId);
         char buffer[INPUT_BUFFER_SIZE];
         Sender::SendConnected(client->socket, clientId);
         while (true)
         {
             client = GetClient(clientId);
-//                std::cout << "受信待ち" << '\n';
+            //                std::cout << "受信待ち" << '\n';
             const int bytesReceived = recv(client->socket, buffer, INPUT_BUFFER_SIZE, 0);
             if (bytesReceived == SOCKET_ERROR || bytesReceived == 0)
             {
@@ -190,27 +198,27 @@ namespace winsoc
             message.CoutMessage();
             switch (message.type)
             {
-                case MessageType::RequestMessage:
-                    SendAllClient(clientId, message.payload);
-                    break;
-                case MessageType::RequestInReversiMsg:
-                    RequestReversiMessage(clientId, message);
-                    break;
-                case MessageType::RequestUserList:
-                    SendUserList(clientId);
-                    break;
-                case MessageType::RequestConnectToPlayClient:
-                    UserPlayConnectRequest(clientId, message);
-                    break;
-                case MessageType::FailConnectedPlayClient:
-                case MessageType::RequestGameStart:
-                    UserPlayConnectResponse(clientId, message);
-                    break;
-                case MessageType::RequestMove:
-                    OnMove(clientId, message);
-                    break;
-                default:
-                    break;
+            case MessageType::RequestMessage:
+                SendAllClient(clientId, message.payload);
+                break;
+            case MessageType::RequestInReversiMsg:
+                RequestReversiMessage(clientId, message);
+                break;
+            case MessageType::RequestUserList:
+                SendUserList(clientId);
+                break;
+            case MessageType::RequestConnectToPlayClient:
+                UserPlayConnectRequest(clientId, message);
+                break;
+            case MessageType::FailConnectedPlayClient:
+            case MessageType::RequestGameStart:
+                UserPlayConnectResponse(clientId, message);
+                break;
+            case MessageType::RequestMove:
+                OnMove(clientId, message);
+                break;
+            default:
+                break;
             }
             if (message.type == MessageType::Disconnected)
             {
@@ -220,7 +228,7 @@ namespace winsoc
         CloseClientConnection(clientId);
     }
 
-    void ReversiServer::OnMove(int clientId, Message &message) const
+    void ReversiServer::OnMove(int clientId, Message& message) const
     {
         SessionInfo* session = nullptr;
         for (auto value : sessions)
@@ -242,7 +250,8 @@ namespace winsoc
         session->OnMove(clientId, row, col);
     }
 
-    void ReversiServer::SendUserList(int clientId) const {
+    void ReversiServer::SendUserList(int clientId) const
+    {
         if (clientSockets.contains(clientId))
         {
             ClientInfo* client = clientSockets.at(clientId);
@@ -260,7 +269,8 @@ namespace winsoc
         // todo Not found user
     }
 
-    void ReversiServer::SendAllClient(int ownerId, const std::string& message) const {
+    void ReversiServer::SendAllClient(int ownerId, const std::string& message) const
+    {
         for (const std::pair<const int, ClientInfo*> clt : clientSockets)
         {
             if (clt.second->id == ownerId)
@@ -271,11 +281,16 @@ namespace winsoc
         }
     }
 
-    void ReversiServer::RequestReversiMessage(int clientId, Message &message) const {
+    void ReversiServer::RequestReversiMessage(int clientId, Message& message) const
+    {
         int sendId = -1;
-        for (const auto &item: sessions) {
-            if (item.second->IsClient(clientId)) {
-                sendId = item.second->clients[0]->id == clientId ? item.second->clients[1]->id : item.second->clients[0]->id;
+        for (const auto& item : sessions)
+        {
+            if (item.second->IsClient(clientId))
+            {
+                sendId = item.second->clients[0]->id == clientId
+                             ? item.second->clients[1]->id
+                             : item.second->clients[0]->id;
                 break;
             }
         }
@@ -286,7 +301,8 @@ namespace winsoc
         }
     }
 
-    void ReversiServer::UserPlayConnectRequest(int clientId, Message &message) const {
+    void ReversiServer::UserPlayConnectRequest(int clientId, Message& message) const
+    {
         int requestId = 0;
         if (MessageHandler::GetSingleIntValue(message, requestId))
         {
@@ -305,7 +321,8 @@ namespace winsoc
         }
     }
 
-    void ReversiServer::Start() {
+    void ReversiServer::Start()
+    {
         InitializeWinsock();
 
         SOCKET listenSocket = SetupListeningSocket();
@@ -324,7 +341,7 @@ namespace winsoc
             }
 
             int clientId = -1;
-            for(int i = 1; i <= maxConnections; ++i)
+            for (int i = 1; i <= maxConnections; ++i)
             {
                 if (!clientSockets.contains(i))
                 {
@@ -345,13 +362,14 @@ namespace winsoc
 
             /// クライアントごとにスレッドを立てる
             std::thread([this, clientId]()
-                        {
-                            this->HandleClient(clientId);
-                        }).detach();
+            {
+                this->HandleClient(clientId);
+            }).detach();
         }
     }
 
-    ReversiServer::~ReversiServer() {
+    ReversiServer::~ReversiServer()
+    {
         for (auto client : clientSockets)
         {
             closesocket(client.second->socket);

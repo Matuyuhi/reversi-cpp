@@ -23,8 +23,6 @@ namespace winsoc
         void Start() override;
 
     private:
-
-
         enum class ClientState
         {
             InReversi,

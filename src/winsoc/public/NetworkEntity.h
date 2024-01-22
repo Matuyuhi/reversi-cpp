@@ -28,10 +28,9 @@ namespace winsoc
 
         static void spacer() { std::cout << "//----------------//" << '\n'; }
 
-        static std::string GetUserInput(const std::string &prompt);
+        static std::string GetUserInput(const std::string& prompt);
 
     protected:
-
         // デフォルトのIPアドレスとポート番号
         const std::string DEFAULT_IP_ADDRESS = "127.0.0.1";
         const int DEFAULT_PORT_NUMBER = 9122;
