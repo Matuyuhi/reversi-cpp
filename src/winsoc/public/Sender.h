@@ -146,7 +146,7 @@ namespace winsoc
     private:
         static void Send(const SOCKET& socket, const Message& message)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
             std::string serialized = Serialize(message);
             // std::cout << "送信: " << serialized << '\n';
             send(socket, serialized.c_str(), static_cast<int>(serialized.length()), 0);

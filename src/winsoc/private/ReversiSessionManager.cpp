@@ -36,12 +36,12 @@ namespace winsoc
         printBoard(color);
     }
 
-    int ReversiSessionManager::getStoneCount(stone color)
+    int ReversiSessionManager::getStoneCount(stone color) const
     {
         return ReversiBoard::getStoneCount(color);
     }
 
-    std::map<stone, int> ReversiSessionManager::getStonesCount()
+    std::map<stone, int> ReversiSessionManager::getStonesCount() const
     {
         return ReversiBoard::getStonesCount();
     }

@@ -23,9 +23,9 @@ namespace winsoc
         void PrintBoard(stone color = stone::Empty);
 
 
-        int getStoneCount(stone color);
+        int getStoneCount(stone color) const;
 
-        std::map<stone, int> getStonesCount();
+        std::map<stone, int> getStonesCount() const;
     };
 } // winsoc
 

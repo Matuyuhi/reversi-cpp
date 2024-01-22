@@ -162,6 +162,7 @@ namespace winsoc
             }
         }
     }
+
     void ReversiServer::UserPlayVsCOM(int clientId)
     {
         if (clientSockets.contains(clientId))
@@ -257,7 +258,7 @@ namespace winsoc
         CloseClientConnection(clientId);
     }
 
-    void ReversiServer::RequestQuitGame(int clientId, const Message& message)
+    void ReversiServer::RequestQuitGame(int clientId, const Message& message) const
     {
         for (const auto& item : sessions)
         {

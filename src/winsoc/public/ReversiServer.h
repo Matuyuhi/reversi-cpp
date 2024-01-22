@@ -115,7 +115,7 @@ namespace winsoc
          * \param clientId 
          * \param message 
          */
-        void RequestQuitGame(int clientId, const Message& message);
+        void RequestQuitGame(int clientId, const Message& message) const;
 
 
         /**
