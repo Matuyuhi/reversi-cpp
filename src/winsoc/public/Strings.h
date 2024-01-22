@@ -20,12 +20,16 @@ namespace winsoc
     public:
         inline static int refreshUserListNum = 0;
         inline static int vsComNum = 9;
+        inline static std::string AutoPlaceStg = "a";
+        inline static std::string RequestQuitGame = "q";
         inline static std::string End = "end";
 
         inline static std::string SelectEntity = "サーバーかクライアントかを選んでください";
 
         inline static std::string OtherPlayerTurn = "相手のターンです";
         inline static std::string YourTurn = "あなたのターンです";
+        inline static std::string AutoNumberIs = AutoPlaceStg + "でランダムなマスに置きます";
+        inline static std::string QuitGameIs = RequestQuitGame + "でゲームを終了します";
         inline static std::string NotYourTurn = "あなたのターンではありません";
 
         inline static std::string WaitServer = "サーバーからの応答を待っています";
@@ -175,6 +179,10 @@ namespace winsoc
             if (result == Result::GameEndDraw)
             {
                 return "引き分けです";
+            }
+            if (result == Result::None)
+            {
+                return "切断しました";
             }
             return "予期せぬエラーが発生しました";
         }

@@ -71,7 +71,7 @@ namespace winsoc
          * @param clientId
          * @param message
          */
-        void OnMove(int clientId, Message& message) const;
+        void OnMove(int clientId, const Message& message) const;
 
         /**
          * ユーザーリストを送る
@@ -109,6 +109,13 @@ namespace winsoc
         void UserPlayConnectResponse(int clientId, Message& message);
 
         void UserPlayVsCOM(int clientId);
+
+        /**
+         * \brief クライアントからの強制終了
+         * \param clientId 
+         * \param message 
+         */
+        void RequestQuitGame(int clientId, const Message& message);
 
 
         /**

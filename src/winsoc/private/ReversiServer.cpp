@@ -87,7 +87,7 @@ namespace winsoc
         {
             if (session.second->IsClient(clientId))
             {
-                if (session.second->clients[0]->state == Disconnect && session.second->clients[1]->state == Disconnect)
+                if (session.second->clients[0]->state != InReversi && session.second->clients[1]->state != InReversi)
                 {
                     delete session.second;
                     deleteId = session.first;
@@ -243,6 +243,9 @@ namespace winsoc
             case MessageType::StartVsCom:
                 UserPlayVsCOM(clientId);
                 break;
+            case MessageType::GameEnd:
+                RequestQuitGame(clientId, message);
+                break;
             default:
                 break;
             }
@@ -254,7 +257,20 @@ namespace winsoc
         CloseClientConnection(clientId);
     }
 
-    void ReversiServer::OnMove(int clientId, Message& message) const
+    void ReversiServer::RequestQuitGame(int clientId, const Message& message)
+    {
+        for (const auto& item : sessions)
+        {
+            if (item.second->IsClient(clientId))
+            {
+                clientSockets.at(clientId)->state = Idle;
+                item.second->ErrorDisconnect(clientId);
+                break;
+            }
+        }
+    }
+
+    void ReversiServer::OnMove(int clientId, const Message& message) const
     {
         SessionInfo* session = nullptr;
         for (auto value : sessions)
@@ -299,7 +315,7 @@ namespace winsoc
     {
         for (const std::pair<const int, ClientInfo*> clt : clientSockets)
         {
-            if (clt.second->id == ownerId)
+            if (clt.second->id == ownerId || clt.second->state == InReversi)
             {
                 continue;
             }
@@ -323,7 +339,7 @@ namespace winsoc
         if (clientSockets.contains(sendId))
         {
             ClientInfo* sendClient = clientSockets.at(sendId);
-            Sender::SendMsg(sendClient->socket, message.payload);
+            Sender::SendMsg(sendClient->socket, Strings::SendUserMessageFormat(clientId, message.payload));
         }
     }
 

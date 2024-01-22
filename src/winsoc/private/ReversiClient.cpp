@@ -8,6 +8,7 @@ namespace winsoc
 {
     void ReversiClient::Start()
     {
+        srand(static_cast<unsigned int>(time(nullptr)));
         InitializeWinsock();
 
         std::cin.clear();
@@ -128,6 +129,36 @@ namespace winsoc
     {
         if (state == ClientState::WaitMoveRequest)
         {
+            if (input.second == Strings::AutoPlaceStg)
+            {
+                //自動入力
+                List<std::pair<int, int>> list = reversiBoard.getPlaceableCells(color);
+                if (list.size() == 0)
+                {
+                    return;
+                }
+                int index = rand() % list.size();
+                int i = 0;
+                std::pair<int, int> cell = *list.begin();
+                for (auto value : list)
+                {
+                    if (i == index)
+                    {
+                        cell = value;
+                    }
+                    i++;
+                }
+                inputRow = cell.first;
+                inputCol = cell.second;
+                SendMoveRequest();
+                return;
+            }
+            if (input.second == Strings::RequestQuitGame)
+            {
+                // ゲームを終了させる
+                Sender::SendGameEnd(connectSocket, "", Result::Error);
+                return;
+            }
             if (input.first == INPUT_ERROR_NUMBER)
             {
                 std::cout << Strings::InputFormatFailed << '\n';
@@ -271,6 +302,8 @@ namespace winsoc
     void ReversiClient::RequireMoveInput()
     {
         std::cout << Strings::YourTurn << '\n';
+        std::cout << Strings::AutoNumberIs << '\n';
+        std::cout << Strings::QuitGameIs << '\n';
         state = ClientState::WaitMoveRequest;
         inputCol = -1;
         inputRow = -1;
@@ -323,7 +356,7 @@ namespace winsoc
                 std::cout << "ClientId: " << user << '\n';
             }
         }
-        std::cout << Strings::NavRefreshUserList << "\n入力:" << '\n';
+        std::cout << Strings::NavRefreshUserList << "\n入力:";
     }
 
     SOCKET ReversiClient::SetupConnection() const

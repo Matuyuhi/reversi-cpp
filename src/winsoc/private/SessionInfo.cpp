@@ -48,12 +48,18 @@ namespace winsoc
             return;
         }
         board.SetStone(row, col, stone);
-        Sender::ResponseMove(client->socket, Strings::PlaceStoneResult(col, row, true, Result::Success),
-                             Result::Success);
-        Sender::SendPlaceStone(client->socket, static_cast<int>(stone), row, col);
-        Sender::ResponseMove(other->socket, Strings::PlaceStoneResult(col, row, false, Result::Success),
-                             Result::Success);
-        Sender::SendPlaceStone(other->socket, static_cast<int>(stone), row, col);
+        if (client->state == InReversi)
+        {
+            Sender::ResponseMove(client->socket, Strings::PlaceStoneResult(col, row, true, Result::Success),
+                      Result::Success);
+            Sender::SendPlaceStone(client->socket, static_cast<int>(stone), row, col);
+        }
+        if (other->state == InReversi)
+        {
+            Sender::ResponseMove(other->socket, Strings::PlaceStoneResult(col, row, false, Result::Success),
+                          Result::Success);
+            Sender::SendPlaceStone(other->socket, static_cast<int>(stone), row, col);
+        }
         SendToggleTurn();
     }
 
@@ -65,6 +71,15 @@ namespace winsoc
             {
                 Sender::SendMsg(client->socket, "相手が切断しました\nAIと戦います");
                 SendToggleTurn();
+            }
+            else
+            {
+                if (client->state != Disconnect)
+                {
+                    // 意図して切断した場合は、結果を返す
+                    Sender::SendMsg(client->socket, "ゲームを終了します");
+                    Sender::SendGameEnd(client->socket, "", Result::None);
+                }
             }
         }
     }
@@ -86,6 +101,10 @@ namespace winsoc
 
     void SessionInfo::SendToggleTurn()
     {
+        if (clients[currentTurn]->state != InReversi && clients[!currentTurn]->state != InReversi)
+        {
+            return;
+        }
         if (board.finished())
         {
             SendFinished();
@@ -121,11 +140,11 @@ namespace winsoc
     void SessionInfo::SendFinished()
     {
         int index = 0;
-        int counts[] = {
+        const int counts[] = {
             board.getStoneCount(ClientStone(0)),
             board.getStoneCount(ClientStone(1))
         };
-        for (auto client : clients)
+        for (const auto client : clients)
         {
             if (!board.getStoneCount(stone::Empty))
             {
@@ -152,6 +171,7 @@ namespace winsoc
                 Sender::SendGameEnd(client->socket, "あなたの勝ちです", Result::GameEndDraw);
             }
             index++;
+            client->state = Idle;
         }
     }
 } // winsoc
