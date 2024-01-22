@@ -34,8 +34,6 @@ namespace winsoc
         std::mutex socketsMutex;
         std::unordered_map<int, SessionInfo*> sessions;
 
-        int portNum = 9122;
-
         const int maxConnections = 6;
 
         /**
@@ -74,7 +72,7 @@ namespace winsoc
          * @param clientId
          * @param message
          */
-        void OnMove(int clientId, Message& message);
+        void OnMove(int clientId, Message& message) const;
 
         /**
          * ユーザーリストを送る
@@ -123,7 +121,7 @@ namespace winsoc
          * setup listening socket
          * @return
          */
-        SOCKET SetupListeningSocket();
+        SOCKET SetupListeningSocket() const;
 
         /**
          * close client connection

@@ -4,6 +4,7 @@
 
 #ifndef WORK_STRINGS_H
 #define WORK_STRINGS_H
+#include <format>
 #include <string>
 
 #include "Message.h"
@@ -14,6 +15,8 @@ namespace winsoc
     class Strings
     {
     public:
+        inline static std::string End = "end";
+        
         inline static std::string OtherPlayerTurn = "相手のターンです";
         inline static std::string YourTurn = "あなたのターンです";
         inline static std::string NotYourTurn = "あなたのターンではありません";
@@ -25,10 +28,85 @@ namespace winsoc
         inline static std::string GameStartOk = "対戦を承諾しました";
         inline static std::string GameStartNg = "対戦を拒否しました";
 
+        inline static std::string InputRow = "横(1~8):";
+        inline static std::string InputCol = "縦(1~8):";
+
         inline static std::string InputFailed = "入力に失敗しました";
         inline static std::string InputFormatFailed = "入力が不正です";
 
         inline static std::string ErrorClientMoveRequest = "入力を完了せずにリクエストを送ろうとしています";
+
+        inline static std::string NotFoundUser = "ユーザーが見つかりません";
+
+        inline static std::string NotInSession = "セッションに参加していません";
+
+        inline static std::string NotConnection = "接続できませんでした";
+
+        inline static std::string ServerConnectError = "サーバーからの切断、またはエラーが発生しました。\n続行するには何かキーを押してください";
+
+        inline static std::string SuccessConnect = "接続成功";
+
+        inline static std::string BadResponse = "bad response";
+
+        inline static std::string StartFailedPleaseReselect = "始められませんでした。もう一度遊ぶ相手を選んでください";
+
+        inline static std::string UserList = "ユーザーリスト";
+        
+        inline static std::string NavRefreshUserList = "更新するには0,遊ぶ場合は相手のClientIdを入力してください";
+
+        inline static std::string SocketOpenError = "ソケットオープンエラー";
+
+        inline static std::string AlreadyOpenedPortError = "ポートが既に使用されています";
+
+        inline static std::string HostName = "Host name";
+
+        inline static std::string IpAddr = "IP Address(es)";
+
+        inline static std::string ListenPort = "Listening on port";
+
+        inline static std::string GetHostNameError = "get hostname failed with error";
+
+        inline static std::string ServerSuccessListen = "listen成功\nクライアント側で表示されたipアドレスとポート番号を入力してください";
+
+        inline static std::string AcceptFailed = "Accept failed";
+
+        inline static std::string MaxClientCountError = "クライアントの接続数が上限に達しています";
+
+        inline static std::string AddedNewClient = "新しいClientが追加されました";
+
+        static std::string DisconnectedClient(int id)
+        {
+            return "クライアント(Id: " + std::to_string(id) + ")が切断しました。";
+        }
+
+        static std::string ClientInputIP(std::string defaultIP)
+        {
+            return "IPアドレスを入力してください（Enterでデフォルト：" + defaultIP + "）: ";
+        }
+        static std::string ClientInputPort(std::string defaultPort)
+        {
+            return "ポート番号を入力してください（Enterでデフォルト：" + defaultPort + "）: ";
+        }
+
+        static std::string ServerConnectedMessage(int userId)
+        {
+            return "あなたのIDは" + std::to_string(userId) + "です。\n" + End + "と入力するといつでも終了できます";
+        }
+
+        static std::string StoneCount(bool isMine, int count)
+        {
+            return std::format("{:<21} {}\n", isMine ? "プレイヤーの石の数:" : "相手の石の数:", count);
+        }
+
+        static std::string SendUserMessageFormat(int clientId, std::string message)
+        {
+            return "client" + std::to_string(clientId) + ":" + message;
+        }
+
+        static std::string Error(int code)
+        {
+            return "Error" + std::to_string(code + baseErrorCode);
+        }
 
         static std::string PlaceStoneResult(int col, int row, bool mine, Result result)
         {
@@ -46,8 +124,6 @@ namespace winsoc
             return "予期せぬエラーが発生しました";
         }
 
-        inline static std::string NotInSession = "セッションに参加していません";
-
         static std::string CallClientStone(const stone stone)
         {
             return "あなたの色は" + NamedStone(stone) + "です";
@@ -55,22 +131,22 @@ namespace winsoc
 
         static std::string SendGameRequest(int findId)
         {
-            return findId + "に対して対戦リクエストを送ります";
+            return std::to_string(findId) + "に対して対戦リクエストを送ります";
         }
 
         static std::string FailStartGame(int otherId)
         {
-            return otherId + "からリクエストが拒否されました。";
+            return std::to_string(otherId) + "からリクエストが拒否されました。";
         }
 
         static std::string FailUserConnect(int otherId)
         {
-            return otherId + "は現在遊べる状態ではないです。";
+            return std::to_string(otherId) + "は現在遊べる状態ではないです。";
         }
 
         static std::string SuccessStartGame(int otherId)
         {
-            return otherId + "からリクエストが承諾されました。";
+            return std::to_string(otherId) + "からリクエストが承諾されました。";
         }
 
         static std::string GameResultMessage(Result result)
@@ -90,7 +166,15 @@ namespace winsoc
             return "予期せぬエラーが発生しました";
         }
 
+        static std::string GameRequested(int userId)
+        {
+            return std::to_string(userId) + "からの対戦リクエストが来ました。\n対戦する場合は1,しない場合は0を入力してください\n入力:";
+        }
+
+        
+
     private:
+        inline static int baseErrorCode = 10000;
         static std::string Named(bool mine)
         {
             return mine ? "あなたが" : "相手が";

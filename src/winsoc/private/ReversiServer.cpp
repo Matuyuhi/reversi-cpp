@@ -6,27 +6,20 @@
 
 namespace winsoc
 {
-    SOCKET ReversiServer::SetupListeningSocket() {
+    SOCKET ReversiServer::SetupListeningSocket() const
+    {
+        
         /// ポート番号の指定 ///
-
-        std::cout << "ポートを指定してください" << '\n';
-        std::pair<int, std::string> input = Input::getInputNumbers();
-        if (input.first == INPUT_ERROR_NUMBER) /// 入力が不正ならdefaultの番号を使う
-        {
-            std::cout << "エラーが発生しました" << '\n';
-            std::cout << "デフォルトのポート: " << portNum << "を使用します" << '\n';
-        }
-        /// ポート番号の更新
-        portNum = input.first;
+        const std::string portInput = GetUserInput(Strings::ClientInputPort(std::to_string(DEFAULT_PORT_NUMBER)));
+        const int portNum = portInput.empty() ? DEFAULT_PORT_NUMBER : std::stoi(portInput);
 
         const SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         if (listenSocket == INVALID_SOCKET)
         {
-            std::cerr << "ソケットオープンエラー: " << WSAGetLastError() << '\n';
+            std::cerr << Strings::SocketOpenError << ": " << WSAGetLastError() << '\n';
             WSACleanup();
             return -1;
         }
-        std::cout << "リスンソケットオープン完了。\n";
         sockaddr_in serverAddr;
         ZeroMemory(&serverAddr, sizeof(SOCKADDR_IN));
         serverAddr.sin_family = AF_INET;
@@ -36,10 +29,10 @@ namespace winsoc
         if (bind(listenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
         {
             int errorCode = WSAGetLastError();
-            std::cerr << "bindのエラー: " << errorCode << '\n';
+            std::cerr << Strings::Error(WSAGetLastError()) << '\n';
             if (errorCode == WSAEADDRINUSE)
             {
-                std::cerr << "ポートが既に使用されています。\n";
+                std::cerr << Strings::AlreadyOpenedPortError << "\n";
             }
             closesocket(listenSocket);
             WSACleanup();
@@ -49,7 +42,7 @@ namespace winsoc
 
         if (listen(listenSocket, 0) == SOCKET_ERROR)
         {
-            std::cerr << "listen error: " << WSAGetLastError() << '\n';
+            std::cerr << Strings::Error(WSAGetLastError()) << '\n';
             closesocket(listenSocket);
             WSACleanup();
             return -1;
@@ -57,15 +50,15 @@ namespace winsoc
         char hostname[256];
         if (gethostname(hostname, sizeof(hostname)) == SOCKET_ERROR)
         {
-            std::cerr << "gethostname failed with error: " << WSAGetLastError() << '\n';
+            std::cerr << Strings::GetHostNameError << ": " << WSAGetLastError() << '\n';
         }
         else
         {
             struct hostent *host = gethostbyname(hostname);
             if (host != nullptr)
             {
-                std::cout << "Host name: " << host->h_name << '\n';
-                std::cout << "IP Address(es): ";
+                std::cout << Strings::HostName << ": " << host->h_name << '\n';
+                std::cout << Strings::IpAddr << ": \n";
                 for (int i = 0; host->h_addr_list[i] != 0; ++i)
                 {
                     struct in_addr addr;
@@ -75,9 +68,9 @@ namespace winsoc
             }
         }
 
-        std::cout << "Listening on port: " << ntohs(serverAddr.sin_port) << '\n';
+        std::cout << Strings::ListenPort << ": " << ntohs(serverAddr.sin_port) << '\n';
 
-        std::cout << "listen成功\nクライアント側で表示されたipアドレスとポート番号を入力してください\n";
+        std::cout << Strings::ServerSuccessListen <<"\n";
 
         return listenSocket;
     }
@@ -106,7 +99,7 @@ namespace winsoc
         {
             closesocket(clientSockets[clientId]->socket);
             clientSockets[clientId]->state = Disconnect;
-            std::cout << "クライアント(Id: " << clientId << ")が切断しました。" << '\n';
+            std::cout << Strings::DisconnectedClient(clientId) << '\n';
             DeleteClient(clientId);
         }
     }
@@ -136,7 +129,7 @@ namespace winsoc
         int requestId = -1;
         if (MessageHandler::GetSingleIntValue(message, requestId))
         {
-            std::cout << "Bad Request\n";
+            std::cout << Strings::BadResponse << "\n";
             return;
         }
         if (clientSockets.contains(requestId))
@@ -227,7 +220,8 @@ namespace winsoc
         CloseClientConnection(clientId);
     }
 
-    void ReversiServer::OnMove(int clientId, Message &message) {
+    void ReversiServer::OnMove(int clientId, Message &message) const
+    {
         SessionInfo* session = nullptr;
         for (auto value : sessions)
         {
@@ -273,7 +267,7 @@ namespace winsoc
             {
                 continue;
             }
-            Sender::SendMsg(clt.second->socket, "client" + std::to_string(ownerId) + ":" + message);
+            Sender::SendMsg(clt.second->socket, Strings::SendUserMessageFormat(ownerId, message));
         }
     }
 
@@ -296,8 +290,7 @@ namespace winsoc
         int requestId = 0;
         if (MessageHandler::GetSingleIntValue(message, requestId))
         {
-            // todo Bad Request
-            std::cout << "Bad Request\n";
+            std::cout << Strings::BadResponse << "\n";
             return;
         }
         if (clientSockets.contains(requestId))
@@ -326,7 +319,7 @@ namespace winsoc
             SOCKET clientSocket = accept(listenSocket, nullptr, nullptr);
             if (clientSocket == INVALID_SOCKET)
             {
-                std::cerr << "Accept failed: " << WSAGetLastError() << '\n';
+                std::cerr << Strings::AcceptFailed << ": " << WSAGetLastError() << '\n';
                 continue;
             }
 
@@ -341,15 +334,14 @@ namespace winsoc
             }
             if (clientId == -1)
             {
-                Sender::SendMsg(clientSocket, "クライアントの接続数が上限に達しています。");
-                std::cout << "クライアントの接続数が上限に達しています。" << '\n';
+                Sender::SendMsg(clientSocket, Strings::MaxClientCountError);
                 closesocket(clientSocket);
                 continue;
             }
-            auto client = new ClientInfo{clientSocket, clientId, Idle};
+            ClientInfo* client = new ClientInfo{clientSocket, clientId, Idle};
             AddClient(client);
 
-            std::cout << "新しいClientが追加されました: " << clientId << '\n';
+            std::cout << Strings::AddedNewClient << ": " << clientId << '\n';
 
             /// クライアントごとにスレッドを立てる
             std::thread([this, clientId]()

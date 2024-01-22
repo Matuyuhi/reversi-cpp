@@ -38,7 +38,7 @@ namespace winsoc
     }
 
     void ReversiClient::InputHandler(const std::pair<int, std::string>& input) {
-        if (input.second == "end")
+        if (input.second == Strings::End)
         {
             std::cout << Strings::SendDisconnect << "\n";
             Sender::SendDisconnected(connectSocket);
@@ -107,7 +107,7 @@ namespace winsoc
             Sender::SendRequestPlayClient(connectSocket, findId);
             return;
         } else {
-            std::cout << "指定のユーザーが見つかりません" << '\n';
+            std::cout << Strings::NotFoundUser << '\n';
         }
 
     }
@@ -117,14 +117,14 @@ namespace winsoc
         {
             if (input.first == INPUT_ERROR_NUMBER)
             {
-                std::cout << "入力が不正です" << '\n';
+                std::cout << Strings::InputFormatFailed << '\n';
                 return;
             }
 
             if (inputCol == -1)
             {
                 inputCol = input.first - 1;
-                std::cout << "横(1~8):";
+                std::cout << Strings::InputRow;
             }
             else if (inputRow == -1)
             {
@@ -134,7 +134,7 @@ namespace winsoc
             else
             {
                 // 例外
-                std::cout << "error: 001" << '\n';
+                std::cout << Strings::Error(1) << '\n';
             }
         }
         else if (state == ClientState::WaitMoveResponse)
@@ -164,7 +164,7 @@ namespace winsoc
             const int bytesReceived = recv(connectSocket, buffer, sizeof(buffer), 0);
             if (bytesReceived <= 0)
             {
-                std::cout << "サーバーからの切断、またはエラーが発生しました。\n続行するには何かキーを押してください\n";
+                std::cout << Strings::ServerConnectError << "\n";
                 running = false;
                 break;
             }
@@ -177,12 +177,11 @@ namespace winsoc
                     // todo
                     std::cout << message.payload << "\n";
                     break;
-                case MessageType::Connected:
+            case MessageType::Connected:
                     // todo
-                    std::cout << "接続成功\n";
+                    std::cout << Strings::SuccessConnect <<"\n";
                     MessageHandler::GetSingleIntValue(message, userId);
-                    std::cout << "あなたのIDは" << userId << "です。\n";
-                    std::cout << "endと入力するといつでも終了できます。\n";
+                    std::cout << Strings::ServerConnectedMessage(userId) << '\n';
                     Sender::SendRequestUserList(connectSocket);
                     break;
                 case MessageType::UserList:
@@ -217,8 +216,8 @@ namespace winsoc
         Result result = message.result;
         std::map<stone, int> stonesCount = reversiBoard.getStonesCount();
         spacer();
-        std::cout << std::format("{:<21} {}\n", "プレイヤーの石の数:", stonesCount[stone::Black]);
-        std::cout << std::format("{:<21} {}\n", "COMの石の数:", stonesCount[stone::White]);
+        std::cout << Strings::StoneCount(true, stonesCount[color]);
+        std::cout << Strings::StoneCount(false, stonesCount[!color]);
         spacer();
         std::cout << Strings::GameResultMessage(result) << '\n';
         spacer();
@@ -231,7 +230,7 @@ namespace winsoc
         std::vector<int> response = MessageHandler::GetPlaceStone(message);
         if (response.size() != 3)
         {
-            std::cout << "error: 002" << '\n';
+            std::cout << Strings::Error(2) << '\n';
             return;
         }
         reversiBoard.SetStone(response[1], response[2], static_cast<stone>(response[0]));
@@ -256,25 +255,25 @@ namespace winsoc
         state = ClientState::WaitMoveRequest;
         inputCol = -1;
         inputRow = -1;
-        std::cout << "縦(1~8):";
+        std::cout << Strings::InputCol;
     }
 
     void ReversiClient::GetPlayUserResponse(const Message& message) {
         int requestId = 0;
         if (MessageHandler::GetSingleIntValue(message, requestId))
         {
-            std::cout << "Bad Request\n";
+            std::cout << Strings::BadResponse << "\n";
             return;
         }
         if (message.type == MessageType::FailConnectedPlayClient)
         {
             // fail
-            std::cout << "始められませんでした。もう一度遊ぶ相手を選んでください。\n";
+            std::cout << Strings::StartFailedPleaseReselect << "\n";
             state = ClientState::Idle;
             return;
         }
         // play
-        color = (stone)requestId;
+        color = static_cast<stone>(requestId);
         state = ClientState::InReversi;
         reversiBoard.Init();
         reversiBoard.PrintBoard(color);
@@ -283,8 +282,7 @@ namespace winsoc
     void ReversiClient::GetRequestUserPlay(const Message& message) {
         int requestedId = -1;
         MessageHandler::GetSingleIntValue(message, requestedId);
-        std::cout << requestedId << "からの対戦リクエストが来ました。\n";
-        std::cout << "対戦する場合は1,しない場合は0を入力してください\n入力:";
+        std::cout << Strings::GameRequested(requestedId);
         state = ClientState::RequestedPlay;
         otherId = requestedId;
     }
@@ -293,32 +291,25 @@ namespace winsoc
         MessageHandler::GetUserList(message, currentUserList);
         if (currentUserList.empty())
         {
-            std::cout << "ほかにユーザーがいません。\n";
+            std::cout << Strings::NotFoundUser << "\n";
         }
         else
         {
-            std::cout << "ユーザーリスト:\n";
+            std::cout << Strings::UserList << ":\n";
             for (int user : currentUserList)
             {
                 std::cout << "ClientId: " << user << '\n';
             }
         }
-        std::cout << "更新するには0,遊ぶ場合は相手のClientIdを入力してください\n入力:" << '\n';
-    }
-
-    std::string ReversiClient::GetUserInput(const std::string &prompt) {
-        std::string input;
-        std::cout << prompt;
-        std::getline(std::cin, input);
-        return input;
+        std::cout << Strings::NavRefreshUserList << "\n入力:" << '\n';
     }
 
     SOCKET ReversiClient::SetupConnection() const {
         // ユーザーからの入力を受け取る関数
 
         // ユーザーからIPアドレスとポート番号を受け取る
-        std::string ipAddress = GetUserInput("IPアドレスを入力してください（Enterでデフォルト：" + DEFAULT_IP_ADDRESS + "）: ");
-        std::string portInput = GetUserInput("ポート番号を入力してください（Enterでデフォルト：" + std::to_string(DEFAULT_PORT_NUMBER) + "）: ");
+        std::string ipAddress = GetUserInput(Strings::ClientInputIP(DEFAULT_IP_ADDRESS));
+        std::string portInput = GetUserInput(Strings::ClientInputPort(std::to_string(DEFAULT_PORT_NUMBER)));
 
         // 入力が空の場合はデフォルト値を使用
         if (ipAddress.empty()) {
@@ -329,7 +320,7 @@ namespace winsoc
         const SOCKET connectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         if (connectSocket == INVALID_SOCKET)
         {
-            std::cout << "ソケットオープンエラー\n";
+            std::cout << Strings::SocketOpenError << "\n";
             WSACleanup();
             return -1;
         }
@@ -342,7 +333,7 @@ namespace winsoc
         }
         if (lpHost == nullptr)
         {
-            std::cout << "エラー\n";
+            std::cout << Strings::Error(3) <<"\n";
             closesocket(connectSocket);
             WSACleanup();
             return -1;
@@ -355,12 +346,12 @@ namespace winsoc
         saddr.sin_addr.s_addr = *reinterpret_cast<u_long*>(lpHost->h_addr);
         if (connect(connectSocket, reinterpret_cast<SOCKADDR*>(&saddr), sizeof(saddr)) == SOCKET_ERROR)
         {
-            std::cout << "接続できませんでした\n";
+            std::cout << Strings::NotConnection << "\n";
             closesocket(connectSocket);
             WSACleanup();
             return -1;
         }
-        std::cout << "接続成功\n";
+        std::cout << Strings::SuccessConnect << "\n";
         return connectSocket;
     }
 

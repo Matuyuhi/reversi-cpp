@@ -4,6 +4,14 @@
 
 #include "../public/NetworkEntity.h"
 
+std::string winsoc::NetworkEntity::GetUserInput(const std::string& prompt)
+{
+    std::string input;
+    std::cout << prompt;
+    std::getline(std::cin, input);
+    return input;
+}
+
 void winsoc::NetworkEntity::InitializeWinsock()
 {
     /// Winsockの初期化

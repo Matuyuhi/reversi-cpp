@@ -23,9 +23,7 @@ namespace winsoc
         void Start() override;
 
     private:
-        // デフォルトのIPアドレスとポート番号
-        const std::string DEFAULT_IP_ADDRESS = "127.0.0.1";
-        const int DEFAULT_PORT_NUMBER = 9122;
+
 
         enum class ClientState
         {
@@ -138,14 +136,6 @@ namespace winsoc
          * @param message
          */
         void GetUserList(const Message& message);
-
-        /**
-         * ユーザーからの入力を受け取る関数
-         * setupでのみ使用
-         * @param prompt
-         * @return
-         */
-        static std::string GetUserInput(const std::string& prompt);
 
         /**
          * clientのセットアップを行う
