@@ -26,6 +26,10 @@ namespace winsoc
         {
             Send(socket, Message{MessageType::Connected, std::to_string(id)});
         }
+        static void SendDisconnected(const SOCKET& socket)
+        {
+            Send(socket, Message{MessageType::Disconnected, ""});
+        }
 
         static void SendMsg(const SOCKET& socket, const std::string& message)
         {

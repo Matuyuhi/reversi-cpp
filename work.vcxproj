@@ -43,7 +43,7 @@
         <ClCompile Include="src\winsoc\private\ReversiClient.cpp"/>
         <ClCompile Include="src\winsoc\private\ReversiServer.cpp"/>
         <ClCompile Include="src\winsoc\private\ReversiSessionManager.cpp" />
-        <ClCompile Include="src\winsoc\private\Sender.cpp"/>
+        <ClCompile Include="src\winsoc\private\SessionInfo.cpp" />
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="src\reversi\public\AIPlayer.h"/>
@@ -57,6 +57,7 @@
         <ClInclude Include="src\reversi\public\ReversiGame.h"/>
         <ClInclude Include="src\reversi\public\Stone.h"/>
         <ClInclude Include="src\reversi\public\TurnState.h"/>
+        <ClInclude Include="src\winsoc\public\ClientInfo.h" />
         <ClInclude Include="src\winsoc\public\Message.h"/>
         <ClInclude Include="src\winsoc\public\MessageHandler.h"/>
         <ClInclude Include="src\winsoc\public\NetworkEntity.h"/>
@@ -64,6 +65,7 @@
         <ClInclude Include="src\winsoc\public\ReversiServer.h"/>
         <ClInclude Include="src\winsoc\public\ReversiSessionManager.h" />
         <ClInclude Include="src\winsoc\public\Sender.h"/>
+        <ClInclude Include="src\winsoc\public\SessionInfo.h" />
         <ClInclude Include="src\winsoc\public\Strings.h" />
     </ItemGroup>
     <PropertyGroup Label="Globals">

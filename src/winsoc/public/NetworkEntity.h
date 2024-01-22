@@ -26,6 +26,8 @@ namespace winsoc
 
         virtual ~NetworkEntity() = default;
 
+        static void spacer() { std::cout << "//----------------//" << '\n'; }
+
     protected:
         /// Winsockの初期化
         WSADATA wsaData;
