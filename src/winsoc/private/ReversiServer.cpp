@@ -8,6 +8,9 @@ namespace winsoc
 {
     SOCKET ReversiServer::SetupListeningSocket() const
     {
+        std::cin.clear();
+        std::cin.ignore(INPUT_BUFFER_SIZE, '\n');
+
         /// ポート番号の指定 ///
         const std::string portInput = GetUserInput(Strings::ClientInputPort(std::to_string(DEFAULT_PORT_NUMBER)));
         const int portNum = portInput.empty() ? DEFAULT_PORT_NUMBER : std::stoi(portInput);
