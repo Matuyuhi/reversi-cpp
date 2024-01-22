@@ -82,6 +82,7 @@ namespace winsoc
         ClientInfo* client = GetClient(clientId);
         if (client == nullptr) return;
         client->state = Disconnect;
+        int deleteId = -1;
         for (auto session : sessions)
         {
             if (session.second->IsClient(clientId))
@@ -89,13 +90,17 @@ namespace winsoc
                 if (session.second->clients[0]->state == Disconnect && session.second->clients[1]->state == Disconnect)
                 {
                     delete session.second;
-                    sessions.erase(session.first);
+                    deleteId = session.first;
                 }
                 else
                 {
                     session.second->ErrorDisconnect(clientId);
                 }
             }
+        }
+        if (deleteId != -1)
+        {
+            sessions.erase(deleteId);
         }
         std::lock_guard<std::mutex> lock(socketsMutex);
         if (clientSockets.contains(clientId))
@@ -110,21 +115,24 @@ namespace winsoc
     void ReversiServer::GameStart(int a, int b)
     {
         ClientInfo* clientA = clientSockets.at(a);
-        ClientInfo* clientB = clientSockets.at(b);
+        ClientInfo* clientB = b > 0 ? clientSockets.at(b) : new ClientInfo{ 0, b, None };;
 
         Sender::SendGameStart(clientA->socket, SessionInfo::ClientStone(0));
         Sender::SendMsg(clientA->socket, Strings::CallClientStone(SessionInfo::ClientStone(0)));
 
-        Sender::SendGameStart(clientB->socket, SessionInfo::ClientStone(1));
-        Sender::SendMsg(clientB->socket, Strings::CallClientStone(SessionInfo::ClientStone(1)));
+        if (clientB->state != None && clientB->state != Disconnect)
+        {
+            Sender::SendGameStart(clientB->socket, SessionInfo::ClientStone(1));
+            Sender::SendMsg(clientB->socket, Strings::CallClientStone(SessionInfo::ClientStone(1)));
+        }
         const int sessionId = static_cast<int>(sessions.size()) + 1;
         auto session = new SessionInfo{
             clientA,
             clientB,
             sessionId
         };
-        clientA->state = InReversi;
-        clientB->state = InReversi;
+        clientA->state = a > 0 ? InReversi : Disconnect;
+        clientB->state = b > 0 ? InReversi : Disconnect;
         session->Initialized();
         AddSession(session);
     }
@@ -151,6 +159,18 @@ namespace winsoc
             {
                 Sender::SendMsg(requestClient->socket, Strings::FailStartGame(clientId));
                 Sender::FailConnectedPlayClient(requestClient->socket, clientId);
+            }
+        }
+    }
+    void ReversiServer::UserPlayVsCOM(int clientId)
+    {
+        if (clientSockets.contains(clientId))
+        {
+            ClientInfo* client = clientSockets.at(clientId);
+            if (client->state == ClientState::Idle)
+            {
+                Sender::SendMsg(client->socket, Strings::StartVsCOM);
+                GameStart(clientId, -1);
             }
         }
     }
@@ -219,6 +239,9 @@ namespace winsoc
                 break;
             case MessageType::RequestMove:
                 OnMove(clientId, message);
+                break;
+            case MessageType::StartVsCom:
+                UserPlayVsCOM(clientId);
                 break;
             default:
                 break;

@@ -108,6 +108,8 @@ namespace winsoc
          */
         void UserPlayConnectResponse(int clientId, Message& message);
 
+        void UserPlayVsCOM(int clientId);
+
 
         /**
          * ゲームを開始する

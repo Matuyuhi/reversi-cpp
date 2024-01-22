@@ -12,9 +12,14 @@
 
 namespace winsoc
 {
+    /**
+     * \brief strings resource
+     */
     class Strings
     {
     public:
+        inline static int refreshUserListNum = 0;
+        inline static int vsComNum = 9;
         inline static std::string End = "end";
 
         inline static std::string SelectEntity = "サーバーかクライアントかを選んでください";
@@ -55,7 +60,9 @@ namespace winsoc
 
         inline static std::string UserList = "ユーザーリスト";
 
-        inline static std::string NavRefreshUserList = "更新するには0,遊ぶ場合は相手のClientIdを入力してください";
+        inline static std::string NavRefreshUserList =
+            "更新するには" + std::to_string(refreshUserListNum) +" ,遊ぶ場合は相手のClientIdを入力してください\n" +
+                std::to_string(vsComNum) + "でCOMと遊べます";
 
         inline static std::string SocketOpenError = "ソケットオープンエラー";
 
@@ -76,6 +83,8 @@ namespace winsoc
         inline static std::string MaxClientCountError = "クライアントの接続数が上限に達しています";
 
         inline static std::string AddedNewClient = "新しいClientが追加されました";
+
+        inline static std::string StartVsCOM = "COMとはじめます";
 
         static std::string DisconnectedClient(int id)
         {

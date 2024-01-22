@@ -62,6 +62,11 @@ namespace winsoc
             Send(socket, Message{MessageType::GameStart, std::to_string(stoneId)});
         }
 
+        static void SendGameStartWithCOM(const SOCKET& socket)
+        {
+            Send(socket, Message{MessageType::StartVsCom, ""});
+        }
+
         static void SendWaitMove(const SOCKET& socket)
         {
             Send(socket, Message{MessageType::WaitMove, ""});

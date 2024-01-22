@@ -23,7 +23,7 @@ namespace winsoc
         int id;
         ClientState state;
     };
-    inline static ClientInfo ClientNone = ClientInfo{0, -1, None};
+    inline static ClientInfo ClientNone = ClientInfo{0, -1, Disconnect};
 }
 
 

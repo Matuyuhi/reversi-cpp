@@ -84,16 +84,23 @@ namespace winsoc
         }
     }
 
-    void ReversiClient::IdleInputHandler(const std::pair<int, std::string>& input)
+    void ReversiClient::IdleInputHandler(const std::pair<int, std::string>& input) const
     {
         if (input.first == INPUT_ERROR_NUMBER)
         {
             Sender::SendMsg(connectSocket, input.second);
             return;
         }
-        if (input.first == 0)
+        // refresh userLit
+        if (input.first == Strings::refreshUserListNum)
         {
             Sender::SendRequestUserList(connectSocket);
+            return;
+        }
+
+        if (input.first == Strings::vsComNum)
+        {
+            Sender::SendGameStartWithCOM(connectSocket);
             return;
         }
         int findId = -1;

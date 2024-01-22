@@ -14,7 +14,7 @@ namespace winsoc
         Error = 1,
         None = 2,
 
-        // api有の結果
+        // api固有の結果
         GameEndWin = 3,
         GameEndLose = 4,
         GameEndDraw = 5,
@@ -28,6 +28,7 @@ namespace winsoc
         UserPlayRequested,
 
         GameStart,
+        StartVsCom,
         ResponseMove,
         PlaceStone,
         WaitMove,
@@ -62,6 +63,7 @@ namespace winsoc
             {MessageType::UserPlayRequested, "UserPlayRequested"},
 
             {MessageType::GameStart, "GameStart"},
+            {MessageType::StartVsCom, "StartVsCom"},
             {MessageType::ResponseMove, "Move"},
             {MessageType::PlaceStone, "PlaceStone"},
             {MessageType::WaitMove, "WaitMove"},

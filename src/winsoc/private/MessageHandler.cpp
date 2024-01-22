@@ -119,6 +119,8 @@ namespace winsoc
         case MessageType::RequestMessage:
         case MessageType::RequestUserList:
         case MessageType::ResponseMove:
+        case MessageType::StartVsCom:
+        case MessageType::RequestInReversiMsg:
             return PayloadType::String;
         }
         std::cout << "Unknown PayloadType\n";

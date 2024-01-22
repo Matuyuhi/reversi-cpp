@@ -34,9 +34,6 @@
     <ClCompile Include="src\winsoc\private\ReversiServer.cpp">
       <Filter>リソース ファイル\winsoc\private</Filter>
     </ClCompile>
-    <ClCompile Include="src\winsoc\private\Sender.cpp">
-      <Filter>リソース ファイル\winsoc\private</Filter>
-    </ClCompile>
     <ClCompile Include="src\reversi\private\AIPlayer.cpp">
       <Filter>リソース ファイル\reversi\private</Filter>
     </ClCompile>
@@ -62,6 +59,9 @@
       <Filter>リソース ファイル\winsoc\private</Filter>
     </ClCompile>
     <ClCompile Include="src\winsoc\private\ReversiSessionManager.cpp">
+      <Filter>リソース ファイル\winsoc\private</Filter>
+    </ClCompile>
+    <ClCompile Include="src\winsoc\private\SessionInfo.cpp">
       <Filter>リソース ファイル\winsoc\private</Filter>
     </ClCompile>
   </ItemGroup>
@@ -121,6 +121,12 @@
       <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
     <ClInclude Include="src\winsoc\public\Strings.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\winsoc\public\ClientInfo.h">
+      <Filter>リソース ファイル\winsoc\public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\winsoc\public\SessionInfo.h">
       <Filter>リソース ファイル\winsoc\public</Filter>
     </ClInclude>
   </ItemGroup>

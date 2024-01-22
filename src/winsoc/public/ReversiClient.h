@@ -70,7 +70,7 @@ namespace winsoc
          * 主にメッセージ送信のみ
          * @param input
          */
-        void IdleInputHandler(const std::pair<int, std::string>& input);
+        void IdleInputHandler(const std::pair<int, std::string>& input) const;
 
         /**
          * ゲーム中の入力ハンドラ
