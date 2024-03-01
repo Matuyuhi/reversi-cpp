@@ -1,5 +1,6 @@
 # reversi-cpp
 c++のリバーシ
+winsocket2を使用した通信可能なオセロ
 
 ## Environment
 - apple m2
